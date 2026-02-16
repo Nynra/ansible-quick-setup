@@ -4,7 +4,7 @@ Ansible resource for quickly setting up hosts.
 
 # Ensure ansible is set up
 
-Using `pipx`
+Using `python`
 
 ```bash
 python3 -m venv .venv
