@@ -1,0 +1,10 @@
+# SSH settings
+security_ssh_allowed_users:
+  - <username>
+# Sudoers settings
+security_sudoers_passwordless: []
+security_sudoers_passworded: []
+security_ssh_allowed_groups: []
+# Update notification settings
+security_autoupdate_mail_to: ""
+security_autoupdate_mail_on_error: true

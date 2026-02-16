@@ -1,0 +1,25 @@
+---
+roles:
+  # https://galaxy.ansible.com/ui/standalone/roles/geerlingguy/docker/documentation/
+  - name: geerlingguy.docker
+    version: "8.0.0"
+  # https://galaxy.ansible.com/ui/standalone/roles/geerlingguy/git/documentation/
+  - name: geerlingguy.git
+    version: "3.0.1"
+  # https://galaxy.ansible.com/ui/standalone/roles/geerlingguy/security/documentation/
+  - name: geerlingguy.security
+    version: "3.0.0"
+
+# collections:
+# # With just the collection name
+# - my_namespace.my_collection
+
+# # With the collection name, version, and source options
+# - name: my_namespace.my_other_collection
+#   version: ">=1.2.0" # Version range identifiers (default: ``*``)
+#   source: ... # The Galaxy URL to pull the collection from (default: ``--api-server`` from cmdline)
+
+# # From git
+# - name: https://github.com/organization/repo_name.git
+#   type: git
+#   version: devel

@@ -1,0 +1,12 @@
+--- 
+- hosts: "local"
+  roles: 
+    - role: geerlingguy.docker
+      vars_files:
+        - vars/docker_vars.yml
+      vars: 
+        docker_edition: "ce"
+    - role: geerlingguy.git
+      vars: 
+        git_version: "2.53.0"
+    
