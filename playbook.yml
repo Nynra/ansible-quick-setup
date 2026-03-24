@@ -1,0 +1,5 @@
+# Main Playbook
+---
+- hosts: parrot
+  roles:
+    - common

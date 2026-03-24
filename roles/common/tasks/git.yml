@@ -1,0 +1,112 @@
+---
+# Downloading and setting up git repos
+
+- name: Install tools from github and set permissions
+  when: git_repos | length > 0
+  block:
+  - name: Create a directory for each tool to be installed
+    ansible.builtin.file:
+      group: "{{ group }}"
+      mode: 0755
+      path: "{{ item.path }}/{{ item.dir_name }}"
+      state: directory
+    loop: "{{ git_repos }}"
+    loop_control:
+      label: "{{ item.dir_name }}"
+
+  - name: Install github tools
+    ansible.builtin.git:
+      repo: "{{ item.repo }}"
+      dest: "{{ item.path }}/{{ item.dir_name }}"
+      force: true
+    loop: "{{ git_repos }}"
+    loop_control:
+      label: "{{item.repo}}"
+
+  - name: Set new file privileges -- recursive
+    ansible.builtin.file:
+      owner: "{{ group }}"
+      path: "{{ item.path }}/{{ item.dir_name }}"
+      mode: 0755
+      recurse: yes
+    loop: "{{git_repos}}"
+    loop_control:
+      label: "{{item.repo}}"
+
+# Install Package dependencies
+- name: Install package using setuptools
+  when: python_setup_common | length > 0
+  block:
+    - name: Setup python packages
+      ansible.builtin.pip:
+        editable: "{{ item.path }}"
+        virtualenv: "{{ item.path }}/venv"
+        virtualenv_command: python3 -m venv
+      args:
+        chdir: "{{item.path}}"
+      loop: "{{python_setup_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the right privileges for the created virtual environment
+      ansible.builtin.file:
+        owner: "{{ group }}"
+        path: "{{ item.path }}/venv"
+        mode: 0755
+        recurse: yes
+      loop: "{{python_setup_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the alias for the installed tool
+      ansible.builtin.file:
+        src: "{{ item.path }}/venv/bin/{{ item.script }}"
+        dest: "/usr/local/bin/{{ item.alias }}"
+        state: link
+      loop: "{{python_setup_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+- name: Install package dependencies using pip
+  when: pip_install_common | length > 0
+  block:
+    - name: Install pip dependencies
+      ansible.builtin.pip:
+        requirements: "{{ item.path }}/requirements.txt"
+        virtualenv: "{{ item.path }}/venv"
+        virtualenv_command: python3 -m venv
+      loop: "{{pip_install_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the right privileges for the created virtual environment
+      ansible.builtin.file:
+        owner: "{{ group }}"
+        path: "{{ item.path }}/venv"
+        mode: 0755
+        recurse: yes
+      loop: "{{pip_install_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the alias for the installed tool
+      ansible.builtin.file:
+        src: "{{ item.path }}/venv/bin/{{ item.script }}"
+        dest: "/usr/local/bin/{{ item.alias }}"
+        state: link
+      loop: "{{pip_install_common}}"
+      loop_control:
+        label: "{{item.path}}"
+
+
+- name: Create symlinks for git tools that are not installed via pip or setup.py
+  when: git_symlinks_common | length > 0
+  block:
+    - name: Create symlink for git tools
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      loop: "{{git_symlinks_common}}"
+      loop_control:
+        label: "{{item.src}}"

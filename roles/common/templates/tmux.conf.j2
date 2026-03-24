@@ -1,0 +1,29 @@
+# Core Settings
+set -g mouse on
+set -g history-limit 50000
+set -g display-time 4000
+set -g status-interval 5
+
+# Improve colors
+set -g default-terminal "screen-256color"
+
+# Remap prefix from 'C-b' to 'C-a' (easier to reach)
+unbind C-b
+set-option -g prefix C-a
+bind-key C-a send-prefix
+
+# Quality of Life
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+# Status Bar Styling (Green for Pentest Mode)
+set -g status-bg black
+set -g status-fg green
+set -g status-left-length 20
+set -g status-left '#[fg=cyan][#S] '
+set -g status-right '#[fg=yellow]%Y-%m-%d #[fg=white]%H:%M:%S'
+
+# Professional Pentest Layout (Prefix + P)
+bind P source-file ~/.tmux/pentest_layout

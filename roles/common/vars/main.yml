@@ -1,0 +1,43 @@
+---
+# bash_setup
+bash_user: <user_name>
+
+# Group ownership for the tools that are installed directly to /opt
+group: <user_group> 
+user: <user_name>
+
+# common apt packages to install
+apt_packages:
+  - tmux
+  - tree
+  - python3
+  - python3-pip
+  - python3-venv
+
+  # searchsploit
+  # - exploitdb 
+  # - exploitdb-bin-sploits 
+  # - exploitdb-papers
+    
+# pip packages    
+pip_packages:
+  - defaultcreds-cheat-sheet
+
+# Common Role git repos 
+git_repos: []
+# https://github.com/lgandx/Responder
+# https://github.com/CoreSecurity/impacket
+
+# pip install
+# pip_install_common:
+#   - {path: "/opt/web-tools/wappalyzer-cli", alias: "wappy", script: "wappalyzer-cli.py"}
+
+# python setup
+python_setup_common: []
+
+# Symlinks for git tools that are not installed via pip or setup.py
+git_symlinks_common: []
+
+# GoLang Tools -- Only on external
+go_tools: []
+

@@ -1,0 +1,10 @@
+---
+- name: Remove useless apt cache
+  become: True
+  ansible.builtin.apt:
+    autoclean: true     
+
+- name: Remove unused apt dependencies
+  become: True
+  ansible.builtin.apt:
+    autoremove: true     

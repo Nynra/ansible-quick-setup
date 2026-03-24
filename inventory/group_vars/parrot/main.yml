@@ -1,0 +1,58 @@
+---
+# bash_setup
+bash_user: <user_name>
+
+# Group ownership for the tools that are installed directly to /opt
+group: <user_group> 
+user: <user_name>
+
+# common apt packages to install
+apt_packages: []
+# - bloodhound
+# - nbtscan-unixwiz
+    
+# pip packages    
+pip_packages: []
+  # - dirhunt
+  # - getsploit
+  # - poetry
+  # - python3-ldap
+  # - python-libpcap
+  # - pywhat
+
+# Common Role git repos 
+git_repos: []
+  # - {path: "/opt/recon-tools", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git"}
+  # - {path: "/opt/recon-tools", dir_name: "findsploit", repo: "https://github.com/1N3/Findsploit.git"}
+
+  # - {path: "/opt/web-tools", dir_name: "dirsearch", repo: "https://github.com/maurosoria/dirsearch.git"}
+
+  # - {path: "/opt/network-tools", dir_name: "nlzr", repo: "https://github.com/noahpowers/nlzr.git"}
+  # - {path: "/opt/network-tools", dir_name: "Pentest-Scripts", repo: "https://github.com/averagesecurityguy/scripts.git"}
+
+  # - {path: "/opt/network-tools", dir_name: "bloodhound", repo: "https://github.com/fox-it/BloodHound.py.git"} 
+  # - {path: "/opt/network-tools", dir_name: "certi", repo: "https://github.com/zer1t0/certi.git"}
+  # - {path: "/opt/network-tools", dir_name: "certipy", repo: "https://github.com/ly4k/Certipy.git"}
+  # - {path: "/opt/network-tools", dir_name: "PCredz", repo: "https://github.com/lgandx/PCredz.git"}
+  # - {path: "/opt/network-tools", dir_name: "Pentest-Scripts", repo: "https://github.com/averagesecurityguy/scripts.git"}
+  # - {path: "/opt/network-tools", dir_name: "PKINITtools", repo: "https://github.com/dirkjanm/PKINITtools"}
+  # - {path: "/opt/network-tools", dir_name: "pywhisker", repo: "https://github.com/ShutdownRepo/pywhisker.git"}
+  # - {path: "/opt/network-tools", dir_name: "pyWhat-pcap", repo: "https://github.com/bee-san/pyWhat.git"}
+  # - {path: "/opt/network-tools", dir_name: "exploit-suggester", repo: "https://github.com/jondonas/linux-exploit-suggester-2.git"}
+  # - {path: "/opt/network-tools", dir_name: "rootend", repo: "https://github.com/twelvesec/rootend.git"}
+  # - {path: "/opt/network-tools", dir_name: "LinPEAs", repo: "https://github.com/carlospolop/PEASS-ng.git"}
+  # - {path: "/opt/network-tools", dir_name: "LinuxSmartEnumeration", repo: "https://github.com/diego-treitos/linux-smart-enumeration.git"}
+  # - {path: "/opt/network-tools", dir_name: "LinEnum", repo: "https://github.com/rebootuser/LinEnum.git"}
+  # - {path: "/opt/network-tools", dir_name: "LinuxPrivChecker", repo: "https://github.com/sleventyeleven/linuxprivchecker.git"}
+  # - {path: "/opt/network-tools", dir_name: "SudoKiller", repo: "https://github.com/TH3xACE/SUDO_KILLER.git"}
+  # - {path: "/opt/network-tools", dir_name: "BeRoot", repo: "https://github.com/AlessandroZ/BeRoot.git"}
+
+# pip install
+pip_install_common: []
+  # - {path: "/opt/network-tools/certi"}
+  # - {path: "/opt/network-tools/certipy"}
+  
+# python setup
+python_setup_common: []
+  # - {path: "/opt/web-tools/dirsearch"}
+  # - {path: "/opt/network-tools/pywhisker"} 

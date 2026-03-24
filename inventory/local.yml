@@ -1,0 +1,9 @@
+---
+parrot:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: python3
+      bash_user: <user_name>
+      user: <user_name>
+      group: <user_group>
