@@ -1,17 +1,15 @@
 - name: Install and upgrade pip
-  when: pip_packages | length > 0
   ansible.builtin.pip:
     name: pip
     extra_args: --upgrade
     executable: pip3
 
 - name: Install python packages
-  when: pip_packages | length > 0
   ansible.builtin.pip:
     name: '{{ item }}'
     state: latest
     executable: pip3
-  loop: '{{ pip_packages }}'
+  loop: '{{ common_pip_packages }}'
 
 # - name: Install pipx
 #   ansible.builtin.shell: python3 -m pip install --user pipx

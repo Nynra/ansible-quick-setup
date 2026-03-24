@@ -18,12 +18,25 @@ bind - split-window -v -c "#{pane_current_path}"
 unbind '"'
 unbind %
 
-# Status Bar Styling (Green for Pentest Mode)
+# Status Bar Styling
 set -g status-bg black
 set -g status-fg green
 set -g status-left-length 20
 set -g status-left '#[fg=cyan][#S] '
 set -g status-right '#[fg=yellow]%Y-%m-%d #[fg=white]%H:%M:%S'
 
-# Professional Pentest Layout (Prefix + P)
+# Layout (Prefix + P)
 bind P source-file ~/.tmux/pentest_layout
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-logging'
+
+# some other nice plugins
+# https://github.com/tmux-plugins/tmux-resurrect
+# https://github.com/tmux-plugins/tmux-pain-control
+# https://github.com/tmux-plugins/tmux-sessionist
+
+# Initialize TMUX plugin manager (keep at bottom)
+run '~/.tmux/plugins/tpm/tpm'

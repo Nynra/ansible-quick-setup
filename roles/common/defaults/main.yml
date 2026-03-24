@@ -1,7 +1,7 @@
 ---
-apt_packages: []
-pip_packages: []
-git_repos: []
-pip_install_common: []
-python_setup_common: []
-go_tools: []
+common_apt_packages: []
+common_pip_packages: []
+common_git_repos: []
+common_pip_install: []
+common_python_setup: []
+common_go_tools: []

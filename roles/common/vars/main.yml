@@ -7,37 +7,29 @@ group: <user_group>
 user: <user_name>
 
 # common apt packages to install
-apt_packages:
+common_apt_packages:
   - tmux
   - tree
-  # - python3
-  # - python3-pip
-  # - python3-venv
-
-  # searchsploit
-  # - exploitdb 
-  # - exploitdb-bin-sploits 
-  # - exploitdb-papers
     
 # pip packages    
-pip_packages:
+common_pip_packages:
   - defaultcreds-cheat-sheet
 
 # Common Role git repos 
-git_repos: []
+common_git_repos: []
 # https://github.com/lgandx/Responder
 # https://github.com/CoreSecurity/impacket
 
 # pip install
-# pip_install_common:
-#   - {path: "/opt/web-tools/wappalyzer-cli", alias: "wappy", script: "wappalyzer-cli.py"}
+common_pip_install:
+  - {path: "/opt/web-tools/wappalyzer-cli", alias: "wappy", script: "wappalyzer-cli.py"}
 
 # python setup
-python_setup_common: []
+common_python_setup: []
 
 # Symlinks for git tools that are not installed via pip or setup.py
-git_symlinks_common: []
+common_git_symlinks: []
 
 # GoLang Tools -- Only on external
-go_tools: []
+common_go_tools: []
 
