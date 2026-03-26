@@ -1,19 +1,19 @@
 # roles/common/main.yml
 ---
 - name: apt tasks 
-  when: common_apt_packages | length > 0
+  when: int_apt_packages | length > 0
   become: True
   ansible.builtin.import_tasks: apt.yml
-  
-- name: Set Environment Variables in .bashrc file 
-  become: True
-  ansible.builtin.import_tasks: env.yml
 
 - name: Python Packages
-  when: common_pip_packages | length > 0
+  when: int_pip_packages | length > 0
   ansible.builtin.import_tasks: pip.yml
   
 - name: Install Tools from GitHub
-  when: common_git_repos | length > 0
+  when: int_git_repos | length > 0
   ansible.builtin.import_tasks: git.yml
 
+- name: Install Go Tools
+  when: int_go_tools | length > 0
+  become: True
+  ansible.builtin.import_tasks: golang.yml

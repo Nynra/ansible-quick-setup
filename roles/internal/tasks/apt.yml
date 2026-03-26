@@ -1,0 +1,26 @@
+---  
+- name: apt-update packages
+  when: int_apt_packages | length > 0
+  ansible.builtin.apt:
+    update_cache: yes
+  notify: Remove useless apt cache
+
+- name: Install multiple apt packages
+  when: int_apt_packages | length > 0
+  ansible.builtin.apt:
+    update_cache: yes
+    force_apt_get: yes
+    install_recommends: yes
+    name: "{{ item }}"
+    state: latest 
+  loop: "{{ int_apt_packages }}"
+  notify: 
+    - Remove useless apt cache
+    - Remove unused apt dependencies
+
+- name: Update local Database
+  when: int_apt_packages | length > 0
+  ansible.builtin.command: updatedb
+
+
+

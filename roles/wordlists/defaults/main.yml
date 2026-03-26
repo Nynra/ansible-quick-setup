@@ -1,7 +1,0 @@
----
-wl_apt_packages: []
-wl_pip_packages: []
-wl_git_repos: []
-wl_pip_install: []
-wl_python_setup: []
-wl_go_tools: []

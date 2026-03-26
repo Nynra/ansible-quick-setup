@@ -1,0 +1,54 @@
+---
+# bash_setup
+bash_user: <user_name>
+
+# Group ownership for the tools that are installed directly to /opt
+group: <user_group> 
+user: <user_name>
+
+# common apt packages to install
+int_apt_packages: []
+    
+# pip packages    
+int_pip_packages:
+  - getsploit
+  - poetry
+
+# Common Role git repos 
+int_git_repos: 
+  # - {path: "/opt/recon-tools", dir_name: "wappalyzer-cli", repo: "https://github.com/gokulapap/wappalyzer-cli.git"}
+  # - {path: "/opt/wordlist-tools", dir_name: "cupp", repo: "https://github.com/Mebus/cupp.git"}
+  - {path: "/opt/wordlist-tools", dir_name: "username-anarchy", repo: "https://github.com/urbanadventurer/username-anarchy.git"}
+  # - {path: "/opt/wordlist-tools", dir_name: "wister", repo: "https://github.com/cycurity/wister.git"}
+  # - {path: "/opt/network-tools", dir_name: "Pentest-Scripts", repo: "https://github.com/averagesecurityguy/scripts.git"}
+  - {path: "/opt/network-tools", dir_name: "bloodhound", repo: "https://github.com/fox-it/BloodHound.py.git"} 
+  # - {path: "/opt/network-tools", dir_name: "certipy", repo: "https://github.com/ly4k/Certipy.git"}
+  - {path: "/opt/network-tools", dir_name: "PCredz", repo: "https://github.com/lgandx/PCredz.git"}
+  - {path: "/opt/network-tools", dir_name: "PKINITtools", repo: "https://github.com/dirkjanm/PKINITtools"}
+  # - {path: "/opt/network-tools", dir_name: "pywhisker", repo: "https://github.com/ShutdownRepo/pywhisker.git"}
+  # - {path: "/opt/network-tools", dir_name: "pyWhat-pcap", repo: "https://github.com/bee-san/pyWhat.git"}
+  # - {path: "/opt/network-tools", dir_name: "exploit-suggester", repo: "https://github.com/jondonas/linux-exploit-suggester-2.git"}
+  - {path: "/opt/network-tools", dir_name: "LinPEAs", repo: "https://github.com/carlospolop/PEASS-ng.git"}
+  - {path: "/opt/network-tools", dir_name: "LinuxSmartEnumeration", repo: "https://github.com/diego-treitos/linux-smart-enumeration.git"}
+  - {path: "/opt/network-tools", dir_name: "LinEnum", repo: "https://github.com/rebootuser/LinEnum.git"}
+  - {path: "/opt/network-tools", dir_name: "LinuxPrivChecker", repo: "https://github.com/sleventyeleven/linuxprivchecker.git"}
+  # - {path: "/opt/network-tools", dir_name: "SudoKiller", repo: "https://github.com/TH3xACE/SUDO_KILLER.git"}
+  # - {path: "/opt/network-tools", dir_name: "BeRoot", repo: "https://github.com/AlessandroZ/BeRoot.git"}
+
+# pip install
+int_pip_install: []
+  # - {path: "/opt/network-tools/certipy", alias: "certipy", script: "certipy.py"}
+  # - {path: "/opt/wordlist-tools/wappalyzer-cli", alias: "wappy", script: "wappalyzer-cli.py"}
+
+# python setup
+# int_python_setup:
+#   - {path: "/opt/network-tools/bloodhound", script: "bloodhound.py", alias: "bloodhound"}
+
+# # Symlinks for git tools that are not installed via pip or setup.py
+# int_git_symlinks: 
+#   - {src: "/opt/wordlist-tools/username-anarchy/username-anarchy", dest: "/usr/local/bin/username-anarchy"}
+#   # - {src: "/opt/wordlist-tools/cupp/cupp.py", dest: "/usr/local/bin/cupp"}
+
+# GoLang Tools -- Only on external
+int_go_tools: []
+

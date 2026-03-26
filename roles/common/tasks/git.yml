@@ -44,7 +44,7 @@
         virtualenv_command: python3 -m venv
       args:
         chdir: "{{item.path}}"
-      loop: "{{python_setup_common}}"
+      loop: "{{ common_python_setup }}"
       loop_control:
         label: "{{item.path}}"
 
