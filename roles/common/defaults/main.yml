@@ -1,7 +1,6 @@
 ---
-# Group ownership for the tools that are installed directly to /opt
-group: scriptkiddie 
 user: scriptkiddie
+group: scriptkiddie
 
 # common apt packages to install
 common_apt_packages:
@@ -42,8 +41,6 @@ common_docker_images: []
 
 # Burp Suite variables
 common_install_burp: false
-common_burpsuite_edition: "community"
-common_burpsuite_release_channel: "stable"
-common_burpsuite_version: "latest"
+common_burpsuite_version: "2026.3.2"
 common_burpsuite_install_dir: "/opt/burpsuite"
 

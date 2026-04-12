@@ -17,11 +17,15 @@
   when: common_git_repos | length > 0
   ansible.builtin.import_tasks: git.yml
 
+- name: Install Docker and pull images
+  when: common_install_docker | default(false)
+  ansible.builtin.import_tasks: docker.yml
+
 - name: Install Wireshark, Tcpdump and Tshark
   when: common_install_wireshark| default(false)
   ansible.builtin.import_tasks: wireshark.yml
 
 - name: Install BurpSuite
   when: common_install_burp | default(false)
-  ansible.builtin.import_tasks: burp.yml
+  ansible.builtin.import_tasks: burp-suite.yml
 

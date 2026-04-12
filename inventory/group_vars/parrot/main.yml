@@ -1,11 +1,4 @@
 ---
-# bash_setup
-bash_user: ${USER}
-
-# Group ownership for the tools that are installed directly to /opt
-group: ${GROUP}
-user: ${USER}
-
 # common apt packages to install (Already installed in parrotOS)
 common_apt_packages: []
 # - bloodhound
@@ -56,3 +49,7 @@ common_apt_packages: []
 # python_setup_common: []
   # - {path: "/opt/web-tools/dirsearch"}
   # - {path: "/opt/network-tools/pywhisker"} 
+
+common_install_docker: false
+common_install_wireshark: false
+common_install_burp: false

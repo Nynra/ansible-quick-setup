@@ -1,6 +1,6 @@
 # Main Playbook
 ---
-- hosts: parrot
+- hosts: all
   roles:
     - common
     # - internal

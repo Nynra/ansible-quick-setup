@@ -1,22 +1,66 @@
 ---
+- name: "Check if Wireshark should be installed"
+  ansible.builtin.stat:
+    path: /usr/bin/wireshark
+  register: wireshark_stat
+
 - name: Install and configure Wireshark
-  become: true
+  when: common_install_wireshark and not wireshark_stat.stat.exists
   block:
     - name: Preseed wireshark-common to allow non-root packet capture
+      become: true
       ansible.builtin.debconf:
         name: wireshark-common
         question: wireshark-common/install-setuid
         vtype: boolean
         value: 'true'
 
-    - name: Install Wireshark on Debian Trixie
+    - name: Install Wireshark
+      become: true
       ansible.builtin.apt:
         name: wireshark
         state: present
         update_cache: yes
 
     - name: Add user to wireshark group for non-root packet capture
+      become: true
       ansible.builtin.user:
-        name: "{{ user }}"
+        name: "{{ ansible_user_id }}"
         groups: wireshark
         append: yes
+
+
+- name: Check if tcpdump is installed for setting permissions for non-root packet capture
+  ansible.builtin.stat:
+    path: /usr/sbin/tcpdump
+  register: tcpdump_stat
+
+
+- name: Set tcpdump permissions for non-root packet capture
+  when: tcpdump_stat.stat.exists
+  block:
+    - name: Create tcpdump group
+      become: true
+      ansible.builtin.group:
+        name: pcap
+        state: present
+
+    - name: Add user to tcpdump group for non-root packet capture
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        groups: pcap
+        append: yes
+
+    - name: Change tcpdump binary group ownership
+      file:
+        path: /usr/sbin/tcpdump
+        group: pcap
+        mode: '0750'
+
+    - name: Set capabilities for tcpdump
+      capabilities:
+        path: /usr/sbin/tcpdump
+        capability: cap_net_raw,cap_net_admin+ep
+        state: present
+

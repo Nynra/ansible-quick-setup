@@ -1,6 +1,13 @@
+---
+- name: Check if Burp Suite is already installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/BurpSuiteCommunity"
+  register: burpsuite_installed
+
 
 # Copied and adapted from https://github.com/iesplin/ansible-role-burpsuite.git
 - name: Install Burp Suite Community Edition
+  when: common_install_burp and not burpsuite_installed.stat.exists
   block:
     - name: Install package dependencies
       ansible.builtin.apt:
@@ -12,95 +19,64 @@
         state: present
       become: true
 
-    - name: Check for previous install
-      ansible.builtin.stat:
-        path: "{{ common_burpsuite_install_dir }}/.install4j/i4jparams.conf"
-      register: install_config_stat
-
-    - name: Read install4j config file
-      ansible.builtin.slurp:
-        src: "{{ common_burpsuite_install_dir }}/.install4j/i4jparams.conf"
-      register: install4j_config_contents
-      when: install_config_stat.stat.exists
-
-    - name: Get installed version
-      ansible.builtin.set_fact:
-        installed_version: >-
-          {{ install4j_config_contents.content
-            | b64decode
-            | regex_search('applicationVersion="[0-9.]+"', multiline=True)
-            | regex_replace('applicationVersion="([0-9.]+)"', '\1')
-          }}
-      when: install_config_stat.stat.exists
-
-    - name: Set installer script filename
-      ansible.builtin.set_fact:
-        burpsuite_installer_script: "burpsuite_{{ common_burpsuite_edition }}_linux_v{{ common_burpsuite_version | regex_replace('\\.', '_') }}.sh"
-
-    - name: Download Burp Suite installer
-      when: not install_config_stat.stat.exists or installed_version != common_burpsuite_version
+    - name: Download Burp Suite installer for amd64
+      when: ansible_architecture == "x86_64"
       ansible.builtin.get_url:
-        url: "https://portswigger.net/burp/releases/download?product={{ common_burpsuite_edition }}&type=linux&version={{ common_burpsuite_version }}"
-        dest: "/tmp/{{ burpsuite_installer_script }}"
-        owner: "{{ user }}"
-        group: "{{ group }}"
+        url: "https://portswigger.net/burp/releases/download?product=community&type=Linux"
+        dest: "/tmp/burpsuite_community_linux_setup.sh"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0640'
+        timeout: 120
+
+    - name: Download Burp Suite installer for aarch64
+      when: ansible_architecture == "aarch64"
+      ansible.builtin.get_url:
+        url: "https://portswigger.net/burp/releases/download?product=community&type=LinuxArm64"
+        dest: "/tmp/burpsuite_community_linux_setup.sh"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
         mode: '0640'
         timeout: 120
 
     - name: Create response.varfile for unattended install
-      when: not install_config_stat.stat.exists or installed_version != common_burpsuite_version
       ansible.builtin.template:
         src: burpsuite_response.varfile.j2
         dest: /tmp/burpsuite_response.varfile
-        owner: "{{ user }}"
-        group: "{{ group }}"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
         mode: '0640'
 
     - name: Install Burp Suite
-      when: not install_config_stat.stat.exists or installed_version != common_burpsuite_version
       ansible.builtin.command:
-        cmd: "/bin/sh {{ burpsuite_installer_script }} -q -varfile burpsuite_response.varfile -overwrite"
+        cmd: "/bin/sh /tmp/burpsuite_community_linux_setup.sh -q -varfile burpsuite_response.varfile -overwrite"
         chdir: /tmp
       changed_when: true
       become: true
-      become_user: "{{ user }}"
+      become_user: "{{ ansible_user_id }}"
 
     - name: Clean-up files used for installation
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       loop:
-        - "/tmp/{{ burpsuite_installer_script }}"
+        - /tmp/burpsuite_community_linux_setup.sh
         - /tmp/burpsuite_response.varfile
 
-    - name: Check for existing user config
-      ansible.builtin.stat:
-        path: "{{ ansible_user_dir }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
-      register: burpsuite_user_config_stat
+    # # Create basic user config
+    # - name: Create Burp Suite user config
+    #   ansible.builtin.template:
+    #     src: UserConfig.json.j2
+    #     dest: "{{ ansible_env.HOME }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
+    #     owner: "{{ ansible_user_id }}"
+    #     group: "{{ ansible_user_id }}"
+    #     mode: '0600'
+    #   when: not burpsuite_user_config_stat.stat.exists
 
-    # Create basic user config
-    - name: Create Burp Suite user config
-      ansible.builtin.template:
-        src: UserConfig.json.j2
-        dest: "{{ ansible_user_dir }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
-        owner: "{{ user }}"
-        group: "{{ group }}"
-        mode: '0600'
-      when: not burpsuite_user_config_stat.stat.exists
-
-    # Otherwise, update existing user config
-    - name: Update jruby path
-      ansible.builtin.lineinfile:
-        path: "{{ ansible_user_dir }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
-        regexp: '^(.*)"location_of_jruby_jar_file":".*'
-        line: '\1"location_of_jruby_jar_file":"{{ burpsuite_extras_dir }}/{{ burpsuite_extras_jars.jruby.jar }}"'
-        backrefs: true
-      when: burpsuite_user_config_stat.stat.exists
-
-    - name: Update jython path
-      ansible.builtin.lineinfile:
-        path: "{{ ansible_user_dir }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
-        regexp: '^(.*)"location_of_jython_standalone_jar_file":".*'
-        line: '\1"location_of_jython_standalone_jar_file":"{{ burpsuite_extras_dir }}/{{ burpsuite_extras_jars.jython.jar }}"'
-        backrefs: true
-      when: burpsuite_user_config_stat.stat.exists
+    # - name: Update jython path
+    #   ansible.builtin.lineinfile:
+    #     path: "{{ ansible_env.HOME }}/.BurpSuite/UserConfig{{ burpsuite_edition | capitalize }}.json"
+    #     regexp: '^(.*)"location_of_jython_standalone_jar_file":".*'
+    #     line: '\1"location_of_jython_standalone_jar_file":"{{ burpsuite_extras_dir }}/{{ burpsuite_extras_jars.jython.jar }}"'
+    #     backrefs: true
+    #   when: burpsuite_user_config_stat.stat.exists

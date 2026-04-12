@@ -1,10 +1,9 @@
 ---
 # Change the group name to match the group vars you want to use
-parrot:
+trixie:
   hosts:
     localhost:
       ansible_connection: local
       ansible_python_interpreter: python3
-      bash_user: ${USER}
       user: ${USER}
       group: ${USER}
