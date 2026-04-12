@@ -2,7 +2,7 @@
 - name: Install tools from github and set permissions
   when: common_git_repos | length > 0
   block:
-  - name: Clone the repositories
+  - name: Cloning repository
     become: true
     ansible.builtin.git:
       repo: "{{ item.repo }}"
@@ -12,7 +12,7 @@
     loop_control:
       label: "{{item.repo}}"
 
-  - name: Set new file privileges -- recursive
+  - name: Set new file privileges for repository -- recursive
     become: true
     ansible.builtin.file:
       owner: "{{ ansible_user_id }}"
