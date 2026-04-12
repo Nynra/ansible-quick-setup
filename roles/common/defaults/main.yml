@@ -1,7 +1,49 @@
 ---
-common_apt_packages: []
-common_pip_packages: []
+# Group ownership for the tools that are installed directly to /opt
+group: scriptkiddie 
+user: scriptkiddie
+
+# common apt packages to install
+common_apt_packages:
+  - tmux
+  - xrdp
+  - tcpdump
+  - tshark
+    
+# pip packages    
+common_pip_packages:
+  - defaultcreds-cheat-sheet
+
+# Common git repos 
 common_git_repos: []
-common_pip_install: []
+# https://github.com/lgandx/Responder
+# https://github.com/CoreSecurity/impacket
+
+# pip install (git packages with a setup.py or pyproject.toml)
+common_pip_install:
+  - {path: "/opt/web-tools/wappalyzer-cli"}
+
+# python setup (git packages with only requirements.txt)
 common_python_setup: []
+
+# Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+# Multiple aliases can be created for the same tool by adding multiple entries with the same path but different alias and script values
+common_python_script_symlinks: []
+
+# Symlinks for git tools
+common_git_symlinks: []
+
+# GoLang Tools -- Only on external
 common_go_tools: []
+
+# Docker images to pull
+common_install_docker: false
+common_docker_images: []
+
+# Burp Suite variables
+common_install_burp: false
+common_burpsuite_edition: "community"
+common_burpsuite_release_channel: "stable"
+common_burpsuite_version: "latest"
+common_burpsuite_install_dir: "/opt/burpsuite"
+

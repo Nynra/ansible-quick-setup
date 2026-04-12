@@ -17,3 +17,11 @@
   when: common_git_repos | length > 0
   ansible.builtin.import_tasks: git.yml
 
+- name: Install Wireshark, Tcpdump and Tshark
+  when: common_install_wireshark| default(false)
+  ansible.builtin.import_tasks: wireshark.yml
+
+- name: Install BurpSuite
+  when: common_install_burp | default(false)
+  ansible.builtin.import_tasks: burp.yml
+

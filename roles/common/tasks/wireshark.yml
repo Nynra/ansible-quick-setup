@@ -1,0 +1,22 @@
+---
+- name: Install and configure Wireshark
+  become: true
+  block:
+    - name: Preseed wireshark-common to allow non-root packet capture
+      ansible.builtin.debconf:
+        name: wireshark-common
+        question: wireshark-common/install-setuid
+        vtype: boolean
+        value: 'true'
+
+    - name: Install Wireshark on Debian Trixie
+      ansible.builtin.apt:
+        name: wireshark
+        state: present
+        update_cache: yes
+
+    - name: Add user to wireshark group for non-root packet capture
+      ansible.builtin.user:
+        name: "{{ user }}"
+        groups: wireshark
+        append: yes

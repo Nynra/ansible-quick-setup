@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: foo
+  author: Nynra
   description: common Role
   min_ansible_version: "2.14"
 

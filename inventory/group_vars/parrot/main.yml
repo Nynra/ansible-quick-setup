@@ -1,18 +1,18 @@
 ---
 # bash_setup
-bash_user: <user_name>
+bash_user: ${USER}
 
 # Group ownership for the tools that are installed directly to /opt
-group: <user_group> 
-user: <user_name>
+group: ${GROUP}
+user: ${USER}
 
-# common apt packages to install
-apt_packages: []
+# common apt packages to install (Already installed in parrotOS)
+common_apt_packages: []
 # - bloodhound
 # - nbtscan-unixwiz
     
-# pip packages    
-pip_packages: []
+# pip packages 
+# common_pip_packages: []
   # - dirhunt
   # - getsploit
   # - poetry
@@ -21,7 +21,7 @@ pip_packages: []
   # - pywhat
 
 # Common Role git repos 
-git_repos: []
+# common_git_repos: []
   # - {path: "/opt/recon-tools", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git"}
   # - {path: "/opt/recon-tools", dir_name: "findsploit", repo: "https://github.com/1N3/Findsploit.git"}
 
@@ -48,11 +48,11 @@ git_repos: []
   # - {path: "/opt/network-tools", dir_name: "BeRoot", repo: "https://github.com/AlessandroZ/BeRoot.git"}
 
 # pip install
-pip_install_common: []
+# pip_install_common: []
   # - {path: "/opt/network-tools/certi"}
   # - {path: "/opt/network-tools/certipy"}
   
 # python setup
-python_setup_common: []
+# python_setup_common: []
   # - {path: "/opt/web-tools/dirsearch"}
   # - {path: "/opt/network-tools/pywhisker"} 

@@ -1,25 +1,13 @@
 ---
-# Downloading and setting up git repos
-
 - name: Install tools from github and set permissions
   when: int_git_repos | length > 0
   block:
-  - name: Create a directory for each tool to be installed
-    ansible.builtin.file:
-      group: "{{ group }}"
-      mode: 0755
-      path: "{{ item.path }}/{{ item.dir_name }}"
-      state: directory
-    loop: "{{ int_git_repos }}"
-    loop_control:
-      label: "{{ item.dir_name }}"
-
-  - name: Install github tools
+  - name: Clone the repositories
     ansible.builtin.git:
       repo: "{{ item.repo }}"
       dest: "{{ item.path }}/{{ item.dir_name }}"
       force: true
-    loop: "{{ int_git_repos }}"
+    loop: "{{int_git_repos}}"
     loop_control:
       label: "{{item.repo}}"
 
@@ -33,17 +21,14 @@
     loop_control:
       label: "{{item.repo}}"
 
-# Install Package dependencies
-- name: Install package using setuptools
+- name: Set up python tools using setup.py and pyproject.toml
   when: int_python_setup | length > 0
   block:
-    - name: Setup python packages
+    - name: Setup python virtual environments and install packages using setup.py or pyproject.toml
       ansible.builtin.pip:
         editable: "{{ item.path }}"
         virtualenv: "{{ item.path }}/venv"
         virtualenv_command: python3 -m venv
-      args:
-        chdir: "{{item.path}}"
       loop: "{{int_python_setup}}"
       loop_control:
         label: "{{item.path}}"
@@ -58,14 +43,6 @@
       loop_control:
         label: "{{item.path}}"
 
-    - name: Set the alias for the installed tool
-      ansible.builtin.file:
-        src: "{{ item.path }}/venv/bin/{{ item.script }}"
-        dest: "/usr/local/bin/{{ item.alias }}"
-        state: link
-      loop: "{{int_python_setup}}"
-      loop_control:
-        label: "{{item.path}}"
 
 - name: Install package dependencies using pip
   when: int_pip_install | length > 0
@@ -89,17 +66,19 @@
       loop_control:
         label: "{{item.path}}"
 
-    - name: Set the alias for the installed tool
+
+- name: Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+  when: int_python_script_symlinks | length > 0
+  block:
+    - name: Create symlink for python tools installed via setup.py or pip
       ansible.builtin.file:
         src: "{{ item.path }}/venv/bin/{{ item.script }}"
         dest: "/usr/local/bin/{{ item.alias }}"
         state: link
-      loop: "{{int_pip_install}}"
-      loop_control:
-        label: "{{item.path}}"
+      loop: "{{int_python_script_symlinks}}"
 
 
-- name: Create symlinks for git tools that are not installed via pip or setup.py
+- name: Create symlinks for non python git tools
   when: int_git_symlinks | length > 0
   block:
     - name: Create symlink for git tools

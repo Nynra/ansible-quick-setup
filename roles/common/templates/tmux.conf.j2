@@ -12,7 +12,15 @@ unbind C-b
 set-option -g prefix C-a
 bind-key C-a send-prefix
 
-# Quality of Life
+# Unbind clear from C to prevent accidental clears and set to O
+unbind C
+bind O clear-history
+
+# Set move window left/right to < and >
+bind-key -r "<" swap-window -d -t -1
+bind-key -r ">" swap-window -d -t +1
+
+# Quality of Life (use | and - for splitting)
 bind | split-window -h -c "#{pane_current_path}"
 bind - split-window -v -c "#{pane_current_path}"
 unbind '"'
@@ -26,7 +34,7 @@ set -g status-left '#[fg=cyan][#S] '
 set -g status-right '#[fg=yellow]%Y-%m-%d #[fg=white]%H:%M:%S'
 
 # Layout (Prefix + P)
-bind P source-file ~/.tmux/pentest_layout
+bind P source-file ~/.tmux/tmux_log_layout
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'

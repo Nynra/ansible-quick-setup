@@ -7,4 +7,18 @@
 - name: Remove unused apt dependencies
   become: True
   ansible.builtin.apt:
-    autoremove: true     
+    autoremove: true    
+
+- name: Docker service up and running
+  become: true
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true 
+
+- name: Run docker hello world
+  ansible.builtin.docker_container:
+    name: hello-world
+    image: hello-world:latest
+    state: started
+    restart_policy: no
