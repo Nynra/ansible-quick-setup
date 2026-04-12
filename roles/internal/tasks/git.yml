@@ -1,0 +1,97 @@
+---
+- name: Install tools from github and set permissions
+  when: common_git_repos | length > 0
+  block:
+  - name: Cloning repository
+    become: true
+    ansible.builtin.git:
+      repo: "{{ item.repo }}"
+      dest: "{{ item.path }}/{{ item.dir_name }}"
+      force: true
+    loop: "{{common_git_repos}}"
+    loop_control:
+      label: "{{item.repo}}"
+
+  - name: Set new file privileges for repository -- recursive
+    become: true
+    ansible.builtin.file:
+      owner: "{{ ansible_user_id }}"
+      path: "{{ item.path }}/{{ item.dir_name }}"
+      mode: 0755
+      recurse: yes
+    loop: "{{common_git_repos}}"
+    loop_control:
+      label: "{{item.repo}}"
+
+- name: Set up python tools using setup.py and pyproject.toml
+  when: common_python_setup | length > 0
+  block:
+    - name: Setup python virtual environments and install packages using setup.py or pyproject.toml
+      become: true
+      ansible.builtin.pip:
+        editable: "{{ item.path }}"
+        virtualenv: "{{ item.path }}/venv"
+        virtualenv_command: python3 -m venv
+      loop: "{{common_python_setup}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the right privileges for the created virtual environment
+      become: true
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}/venv"
+        mode: 0755
+        recurse: yes
+      loop: "{{common_python_setup}}"
+      loop_control:
+        label: "{{item.path}}"
+
+
+- name: Install package dependencies using pip
+  when: common_pip_install | length > 0
+  block:
+    - name: Install pip dependencies
+      become: true
+      ansible.builtin.pip:
+        requirements: "{{ item.path }}/requirements.txt"
+        virtualenv: "{{ item.path }}/venv"
+        virtualenv_command: python3 -m venv
+      loop: "{{common_pip_install}}"
+      loop_control:
+        label: "{{item.path}}"
+
+    - name: Set the right privileges for the created virtual environment
+      become: true
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}/venv"
+        mode: 0755
+        recurse: yes
+      loop: "{{common_pip_install}}"
+      loop_control:
+        label: "{{item.path}}"
+
+
+- name: Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+  when: common_python_script_symlinks | length > 0
+  block:
+    - name: Create symlink for python tools installed via setup.py or pip
+      ansible.builtin.file:
+        src: "{{ item.path }}/venv/bin/{{ item.script }}"
+        dest: "/usr/local/bin/{{ item.alias }}"
+        state: link
+      loop: "{{common_python_script_symlinks}}"
+
+
+- name: Create symlinks for non python git tools
+  when: common_git_symlinks | length > 0
+  block:
+    - name: Create symlink for git tools
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      loop: "{{common_git_symlinks}}"
+      loop_control:
+        label: "{{item.src}}"

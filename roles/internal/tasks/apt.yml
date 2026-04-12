@@ -1,12 +1,12 @@
 ---  
 - name: apt-update packages
-  when: common_apt_packages | length > 0
+  when: int_apt_packages | length > 0
   ansible.builtin.apt:
     update_cache: yes
   notify: Remove useless apt cache
 
 - name: Install multiple apt packages
-  when: common_apt_packages | length > 0
+  when: int_apt_packages | length > 0
   ansible.builtin.apt:
     update_cache: yes
     # force_apt_get: yes
@@ -17,3 +17,6 @@
   notify: 
     - Remove useless apt cache
     - Remove unused apt dependencies
+
+
+
