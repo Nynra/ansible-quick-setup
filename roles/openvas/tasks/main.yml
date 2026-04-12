@@ -1,0 +1,49 @@
+---
+- name: Create the directory for the stack
+  become: true
+  ansible.builtin.file:
+    path: "{{ openvas_stack_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Copying the docker-compose file for OpenVAS
+  become: true
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ openvas_stack_dir }}/docker-compose.yml"
+    mode: 0644
+
+- name: Setting user permissions for the OpenVAS stack directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ openvas_stack_dir }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0755
+
+- name: Async pulling docker containers for OpenVAS
+  ansible.builtin.command: docker compose pull
+  args:
+    chdir: "{{ openvas_stack_dir }}"
+  async: 1000
+  poll: 0
+  register: pull_openvas_stack
+
+- name: Wait for the docker pull to finish
+  async_status:
+    jid: "{{ pull_openvas_stack.ansible_job_id }}"
+  register: pull_openvas_stack_result
+  until: pull_openvas_stack_result.finished
+  retries: 1000
+  delay: 5
+
+- name: Cleaning up async file
+  ansible.builtin.async_status:
+    jid: '{{ pull_openvas_stack.ansible_job_id }}'
+    mode: cleanup
+  
+- name: Starting OpenVAS stack
+  when: openvas_start_stack
+  ansible.builtin.command: docker compose up -d
+  args:
+    chdir: "{{ openvas_stack_dir }}"

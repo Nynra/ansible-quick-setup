@@ -1,0 +1,5 @@
+---
+openvas_stack_dir: "/opt/openvas"
+openvas_start_stack: true
+openvas_nginx_port: 443
+openvas_ospd_port: 9392

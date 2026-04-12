@@ -1,7 +1,4 @@
 ---
-user: scriptkiddie
-group: scriptkiddie
-
 # common apt packages to install
 common_apt_packages:
   - tmux
