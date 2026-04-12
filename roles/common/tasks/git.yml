@@ -3,6 +3,7 @@
   when: common_git_repos | length > 0
   block:
   - name: Clone the repositories
+    become: true
     ansible.builtin.git:
       repo: "{{ item.repo }}"
       dest: "{{ item.path }}/{{ item.dir_name }}"
@@ -12,8 +13,9 @@
       label: "{{item.repo}}"
 
   - name: Set new file privileges -- recursive
+    become: true
     ansible.builtin.file:
-      owner: "{{ group }}"
+      owner: "{{ ansible_user_id }}"
       path: "{{ item.path }}/{{ item.dir_name }}"
       mode: 0755
       recurse: yes
@@ -25,6 +27,7 @@
   when: common_python_setup | length > 0
   block:
     - name: Setup python virtual environments and install packages using setup.py or pyproject.toml
+      become: true
       ansible.builtin.pip:
         editable: "{{ item.path }}"
         virtualenv: "{{ item.path }}/venv"
@@ -34,8 +37,9 @@
         label: "{{item.path}}"
 
     - name: Set the right privileges for the created virtual environment
+      become: true
       ansible.builtin.file:
-        owner: "{{ group }}"
+        owner: "{{ ansible_user_id }}"
         path: "{{ item.path }}/venv"
         mode: 0755
         recurse: yes
@@ -48,6 +52,7 @@
   when: common_pip_install | length > 0
   block:
     - name: Install pip dependencies
+      become: true
       ansible.builtin.pip:
         requirements: "{{ item.path }}/requirements.txt"
         virtualenv: "{{ item.path }}/venv"
@@ -57,8 +62,9 @@
         label: "{{item.path}}"
 
     - name: Set the right privileges for the created virtual environment
+      become: true
       ansible.builtin.file:
-        owner: "{{ group }}"
+        owner: "{{ ansible_user_id }}"
         path: "{{ item.path }}/venv"
         mode: 0755
         recurse: yes
