@@ -1,0 +1,9 @@
+common_apt_packages:
+  - tmux
+  - tcpdump
+
+common_pip_packages: []
+
+common_install_docker: false
+common_install_wireshark: false
+common_install_burp: false

@@ -1,6 +1,6 @@
 ---
 # Change the group name to match the group vars you want to use
-trixie:
+desktop:
   hosts:
     localhost:
       ansible_connection: local

@@ -11,15 +11,15 @@ common_pip_packages:
   - poetry
 
 # Common git repos 
-common_git_repos:
-  - {path: "/opt/recon-tools", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git"}
+common_git_repos: []
+  # - {path: "/opt/recon-tools", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git"}
 
 # https://github.com/lgandx/Responder
 # https://github.com/CoreSecurity/impacket
 
 # pip install (git packages with a setup.py or pyproject.toml)
-common_pip_install: 
-  - {path: "/opt/recon-tools/defaultcredsearch"}
+common_pip_install: []
+  # - {path: "/opt/recon-tools/defaultcredsearch"}
 
 # python setup (git packages with only requirements.txt)
 common_python_setup: []
@@ -29,8 +29,8 @@ common_python_setup: []
 common_python_script_symlinks: []
 
 # Symlinks for git tools
-common_git_symlinks: 
-- {src: "/opt/recon-tools/defaultcredsearch/creds", dest: "creds"}
+common_git_symlinks: []
+# - {src: "/opt/recon-tools/defaultcredsearch/creds", dest: "creds"}
 
 
 # GoLang Tools -- Only on external
