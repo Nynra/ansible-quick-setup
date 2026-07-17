@@ -1,0 +1,7 @@
+---
+# Change the group name to match the group vars you want to use
+parrot:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: python3
