@@ -1,6 +1,6 @@
 # ansible-sec-tools
 
-Ansible roles to quickly set up a pentest host. Mostly copied from [Hacked by a girl](https://github.com/hackedbyagirl/offensive-kali-ansible/tree/main)
+Ansible roles to quickly set up a pentest host. Mostly copied from [Hacked by a girl](https://github.com/hackedbyagirl/offensive-kali-ansible/tree/main).
 
 ## Kali or Linux Host
 
