@@ -1,0 +1,18 @@
+#!/bin/bash
+# Check if there is an existing tmux session
+if tmux has-session 2>/dev/null; then
+    echo "An existing tmux session is running. Would you like to attach to it? (y/n)"
+    read -r answer
+    if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+    tmux attach-session
+    exit 0
+    fi
+fi
+
+# Launch a tmux session with a 3-pane layout: Main, Listener, and Logs
+SESSION="tmux_log_$(date +%s)"
+tmux new-session -d -s $SESSION
+tmux split-window -h
+tmux split-window -v
+tmux select-pane -t 0
+tmux attach-session -t $SESSION
