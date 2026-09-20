@@ -9,6 +9,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 VENV_DIR="${VENV_DIR:-$SCRIPT_DIR/.venv}"
 INVENTORY_DIR="${INVENTORY_DIR:-$SCRIPT_DIR/inventory}"
 PLAYBOOK="${PLAYBOOK:-$SCRIPT_DIR/playbook.yml}"
@@ -19,6 +21,8 @@ ANSIBLE_ARGS=()
 PROCEED=true
 REMOVE_VENV=false
 AUTO_MODE=false
+LOCAL_COLLECTIONS_ROOT="$SCRIPT_DIR/collections"
+LOCAL_STRUCTAM_COLLECTIONS="$LOCAL_COLLECTIONS_ROOT/ansible_collections/structam"
 
 usage() {
     cat <<'EOF'
@@ -201,7 +205,30 @@ if ! command -v ansible-playbook >/dev/null 2>&1; then
 fi
 
 echo "Installing required Ansible collections..."
-ansible-galaxy collection install --upgrade -r "$REQUIREMENTS"
+collection_names=()
+while IFS= read -r collection_name; do
+    [[ -n "$collection_name" ]] && collection_names+=("$collection_name")
+done < <(grep -E '^[[:space:]]*-[[:space:]]*name:' "$REQUIREMENTS" | sed -E 's/^[[:space:]]*-[[:space:]]*name:[[:space:]]*//')
+
+if [[ ${#collection_names[@]} -eq 0 ]]; then
+    echo "No collection entries found in $REQUIREMENTS."
+else
+    for collection_name in "${collection_names[@]}"; do
+        echo "Installing collection: $collection_name"
+        if ansible-galaxy collection install --upgrade "$collection_name"; then
+            continue
+        fi
+
+        if [[ "$collection_name" == structam.* && -d "$LOCAL_STRUCTAM_COLLECTIONS" ]]; then
+            echo "Warning: unable to install $collection_name. Falling back to the bundled local collections in $LOCAL_COLLECTIONS_ROOT."
+            export ANSIBLE_COLLECTIONS_PATH="$LOCAL_COLLECTIONS_ROOT"
+            export ANSIBLE_COLLECTIONS_PATHS="$LOCAL_COLLECTIONS_ROOT"
+            continue
+        fi
+
+        echo "Warning: collection $collection_name could not be installed and no local fallback was found. Continuing without it."
+    done
+fi
 
 # --- Run ----------------------------------------------------------
 if [[ "$PROCEED" != true ]]; then
