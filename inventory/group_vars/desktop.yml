@@ -1,3 +1,7 @@
+bash_setup: true
+tmux_setup: true
+nvim_setup: true
+
 install_common_packages: true
 common_install_wireshark: false
 common_install_burp: false
