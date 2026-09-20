@@ -1,7 +1,7 @@
 ---
 bash_setup: true
 tmux_setup: true
-nvim_setup: true
+nvim_setup: false
 
 install_common_packages: false
 common_install_tmux_workspace: false
