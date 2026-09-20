@@ -24,6 +24,11 @@ The playbook consumes the `structam.sec_tools` collection. The setup script
 installs it and its package-installer dependency from the Git repositories in
 `requirements.yml`.
 
+If you are running this repo from an external or isolated host and the private
+GitLab-hosted `structam.*` collections are unreachable, the script will detect
+that failure and fall back to the bundled local copies under `collections/` in
+this repository instead of aborting.
+
 The common role is enabled by default. To also install internal testing tools,
 uncomment the `structam.sec_tools.internal` role in `playbook.yml`.
 
