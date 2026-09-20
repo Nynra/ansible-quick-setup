@@ -1,0 +1,11 @@
+---
+# roles/zap/handlers/main.yml
+
+- name: Restart zap
+  ansible.builtin.systemd_service:
+    name: zap
+    state: restarted
+    daemon_reload: true
+  # Tasks outside the daemon block (the /opt/zap symlink) also notify this
+  # handler, so guard against the unit not existing.
+  when: zap_daemon_enabled | bool

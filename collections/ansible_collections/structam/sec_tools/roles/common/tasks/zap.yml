@@ -1,0 +1,192 @@
+---
+# roles/zap/tasks/zap.yml
+- name: Verify the target runs a supported distribution
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] == 'Debian'
+    fail_msg: >-
+      The zap role supports Debian and Ubuntu only
+      (found {{ ansible_facts['distribution'] }}
+      {{ ansible_facts['distribution_version'] }}).
+    quiet: true
+  tags:
+    - zap
+ 
+- name: Require an API key when the daemon is enabled
+  ansible.builtin.assert:
+    that:
+      - zap_daemon_api_key | length > 0
+    fail_msg: >-
+      Set zap_daemon_api_key (ideally from ansible-vault) before enabling
+      the daemon. Running the ZAP API without a key leaves an
+      unauthenticated proxy on the host.
+    quiet: true
+  when: zap_daemon_enabled | bool
+  tags:
+    - zap
+    - zap_daemon
+
+- name: Install Java and supporting packages
+  ansible.builtin.apt:
+    name:
+      - "{{ zap_java_package }}"
+      - ca-certificates
+      - tar
+    state: present
+    update_cache: true
+    cache_valid_time: "{{ zap_apt_cache_valid_time }}"
+
+- name: Create the download cache directory
+  ansible.builtin.file:
+    path: "{{ zap_download_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download the ZAP Linux package
+  ansible.builtin.get_url:
+    url: "{{ zap_download_url }}"
+    dest: "{{ zap_download_dir }}/ZAP_{{ zap_version }}_Linux.tar.gz"
+    checksum: "{{ zap_checksum | default(omit, true) }}"
+    owner: root
+    group: root
+    mode: "0644"
+    timeout: 120
+  register: zap_download
+  retries: 3
+  delay: 5
+  until: zap_download is succeeded
+
+- name: Create the versioned installation directory
+  ansible.builtin.file:
+    path: "{{ zap_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Unpack ZAP
+  ansible.builtin.unarchive:
+    src: "{{ zap_download_dir }}/ZAP_{{ zap_version }}_Linux.tar.gz"
+    dest: "{{ zap_install_dir }}"
+    remote_src: true
+    extra_opts:
+      - --strip-components=1
+    owner: root
+    group: root
+    creates: "{{ zap_install_dir }}/zap.sh"
+
+- name: Point {{ zap_current_link }} at the installed version
+  ansible.builtin.file:
+    src: "{{ zap_install_dir }}"
+    dest: "{{ zap_current_link }}"
+    state: link
+    force: true
+  notify: Restart zap
+
+- name: Put zap.sh on the system PATH
+  ansible.builtin.file:
+    src: "{{ zap_current_link }}/zap.sh"
+    dest: "{{ item }}"
+    state: link
+  loop: "{{ zap_bin_links }}"
+
+- name: Remove the downloaded archive
+  ansible.builtin.file:
+    path: "{{ zap_download_dir }}/ZAP_{{ zap_version }}_Linux.tar.gz"
+    state: absent
+  when: zap_cleanup_archive | bool
+
+# --- Optional: run ZAP as a headless API/proxy daemon --------------------
+- name: Configure the ZAP daemon
+  when: zap_daemon_enabled | bool
+  tags:
+    - zap_daemon
+  block:
+    - name: Create the ZAP system group
+      ansible.builtin.group:
+        name: "{{ zap_daemon_group }}"
+        system: true
+
+    - name: Create the ZAP system user
+      ansible.builtin.user:
+        name: "{{ zap_daemon_user }}"
+        group: "{{ zap_daemon_group }}"
+        home: "{{ zap_daemon_home }}"
+        create_home: true
+        shell: /usr/sbin/nologin
+        system: true
+
+    - name: Secure the ZAP working directory
+      ansible.builtin.file:
+        path: "{{ zap_daemon_home }}"
+        state: directory
+        owner: "{{ zap_daemon_user }}"
+        group: "{{ zap_daemon_group }}"
+        mode: "0750"
+
+    # The API key is passed on the command line, so it is visible in `ps` to
+    # local users. Binding to 127.0.0.1 keeps exposure local; on a shared
+    # host, set the key in {{ zap_daemon_home }}/config.xml instead and drop
+    # the -config api.key argument.
+    - name: Install the zap.service unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/zap.service
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=OWASP ZAP daemon
+          Documentation=https://www.zaproxy.org/docs/
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          Type=simple
+          User={{ zap_daemon_user }}
+          Group={{ zap_daemon_group }}
+          Environment=HOME={{ zap_daemon_home }}
+          WorkingDirectory={{ zap_daemon_home }}
+          ExecStart={{ zap_current_link }}/zap.sh -daemon \
+            -host {{ zap_daemon_host }} \
+            -port {{ zap_daemon_port }} \
+            -dir {{ zap_daemon_home }} \
+            -config api.key={{ zap_daemon_api_key }} \
+            -config api.addrs.addr.name={{ zap_daemon_host }} \
+            -config api.addrs.addr.regex=false{% for opt in zap_daemon_extra_options %} \
+            {{ opt }}{% endfor %}
+
+          Restart=on-failure
+          RestartSec=10
+          TimeoutStopSec=30
+
+          NoNewPrivileges=true
+          PrivateTmp=true
+          ProtectSystem=strict
+          ProtectHome=true
+          ProtectKernelTunables=true
+          ProtectControlGroups=true
+          RestrictSUIDSGID=true
+          ReadWritePaths={{ zap_daemon_home }}
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Restart zap
+
+    - name: Enable and start the ZAP daemon
+      ansible.builtin.systemd_service:
+        name: zap
+        enabled: true
+        state: started
+        daemon_reload: true
+
+- name: Report the installed version
+  ansible.builtin.command: "{{ zap_current_link }}/zap.sh -version"
+  register: zap_installed_version
+  changed_when: false
+
+- name: Show the installed version
+  ansible.builtin.debug:
+    msg: "{{ zap_installed_version.stdout_lines | select | list }}"

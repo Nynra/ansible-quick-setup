@@ -1,0 +1,14 @@
+---
+collections:
+  - name: structam.sec_tools
+    type: git
+    source: https://gitlab.eaglediksix.nl/ansible/collections/sec-tools.git
+    # version: main
+  - name: structam.ansible_package_installer
+    type: git
+    source: https://gitlab.eaglediksix.nl/ansible/collections/ansible-package-installer.git
+    # version: main
+  - name: structam.general_server_management
+    type: git
+    source: https://gitlab.eaglediksix.nl/ansible/collections/general-server-management.git
+    # version: main

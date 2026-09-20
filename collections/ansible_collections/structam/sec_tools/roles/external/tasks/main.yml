@@ -1,0 +1,24 @@
+---
+- name: Install external packages and tools
+  ansible.builtin.include_role:
+    name: structam.ansible_package_installer.installers
+  vars:
+    installer_apt_packages: "{{ external_apt_packages }}"
+    installer_apt_cleanup: "{{ external_apt_cleanup }}"
+    installer_pip_packages: "{{ external_pip_packages }}"
+    installer_pip_upgrade: "{{ external_pip_upgrade }}"
+    installer_pip_virtualenv: "{{ external_pip_virtualenv }}"
+    installer_pip_virtualenv_command: "{{ external_pip_virtualenv_command }}"
+    installer_pip_become: "{{ external_pip_become }}"
+    installer_git_repos: "{{ external_git_repos }}"
+    installer_git_force: "{{ external_git_force }}"
+    installer_git_python_script_symlinks: "{{ external_git_python_script_symlinks }}"
+    installer_git_python_file_symlinks: "{{ external_git_python_file_symlinks }}"
+    installer_git_symlinks: "{{ external_git_symlinks }}"
+    installer_git_symlink_become: "{{ external_git_symlink_become }}"
+    installer_download_files: "{{ external_download_files }}"
+    installer_download_become: "{{ external_download_become }}"
+    installer_download_force: "{{ external_download_force }}"
+    installer_download_archives: "{{ external_download_archives }}"
+    installer_download_symlinks: "{{ external_download_symlinks }}"
+    installer_download_symlink_become: "{{ external_download_symlink_become }}"

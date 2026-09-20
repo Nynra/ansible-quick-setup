@@ -1,0 +1,13 @@
+---
+# Package maintenance
+manage_update_cache: true
+manage_cache_valid_time: 3600
+manage_upgrade: true
+manage_upgrade_type: dist
+manage_autoremove: true
+
+# Reboot behavior
+manage_reboot_if_required: true
+manage_reboot_timeout: 900
+manage_reboot_connect_timeout: 5
+manage_reboot_test_command: whoami

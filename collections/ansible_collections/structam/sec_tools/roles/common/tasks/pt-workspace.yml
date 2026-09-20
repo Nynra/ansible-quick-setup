@@ -1,0 +1,6 @@
+- name: Create Tmux Pentest Workspace Launcher
+  ansible.builtin.template:
+    src: pt-workspace.j2
+    dest: /usr/local/bin/pt-workspace
+    mode: '0755'
+  become: true

@@ -1,0 +1,23 @@
+- name: Install wireless packages and tools
+  ansible.builtin.include_role:
+    name: structam.ansible_package_installer.installers
+  vars:
+    installer_apt_packages: "{{ wireless_apt_packages }}"
+    installer_apt_cleanup: "{{ wireless_apt_cleanup }}"
+    installer_pip_packages: "{{ wireless_pip_packages }}"
+    installer_pip_upgrade: "{{ wireless_pip_upgrade }}"
+    installer_pip_virtualenv: "{{ wireless_pip_virtualenv }}"
+    installer_pip_virtualenv_command: "{{ wireless_pip_virtualenv_command }}"
+    installer_pip_become: "{{ wireless_pip_become }}"
+    installer_git_repos: "{{ wireless_git_repos }}"
+    installer_git_force: "{{ wireless_git_force }}"
+    installer_git_python_script_symlinks: "{{ wireless_git_python_script_symlinks }}"
+    installer_git_python_file_symlinks: "{{ wireless_git_python_file_symlinks }}"
+    installer_git_symlinks: "{{ wireless_git_symlinks }}"
+    installer_git_symlink_become: "{{ wireless_git_symlink_become }}"
+    installer_download_files: "{{ wireless_download_files }}"
+    installer_download_become: "{{ wireless_download_become }}"
+    installer_download_force: "{{ wireless_download_force }}"
+    installer_download_archives: "{{ wireless_download_archives }}"
+    installer_download_symlinks: "{{ wireless_download_symlinks }}"
+    installer_download_symlink_become: "{{ wireless_download_symlink_become }}"

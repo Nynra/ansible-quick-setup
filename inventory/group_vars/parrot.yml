@@ -1,13 +1,8 @@
 ---
-common_apt_packages: []
-common_pip_packages: []
-  # - dirhunt
-  # - getsploit
-  # - poetry
-  # - python3-ldap
-  # - python-libpcap
-  # - pywhat
-
-common_install_docker: false
+install_common_packages: false
+common_install_tmux_workspace: false
 common_install_wireshark: false
 common_install_burp: false
+install_internal_packages: false
+install_external_packages: false
+install_wireless_packages: false 

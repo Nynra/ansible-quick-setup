@@ -1,0 +1,32 @@
+---
+# APT packages to install for wireless tools
+wireless_apt_packages:
+- bettercap
+wireless_apt_cleanup: true
+
+# Python packages to install with pip
+wireless_pip_packages: []
+wireless_pip_upgrade: false
+wireless_pip_virtualenv: "/opt/sec-tools/wireless-venv"
+wireless_pip_virtualenv_command: "python3 -m venv"
+wireless_pip_become: true
+
+# Git repositories to clone
+wireless_git_repos: []
+wireless_git_force: false
+wireless_git_symlink_become: true
+
+# Executable symlinks for Python tools installed in a virtual environment
+wireless_git_python_script_symlinks: []
+wireless_git_python_file_symlinks: []
+
+# Standalone file downloads
+wireless_download_files: []
+wireless_download_become: true
+wireless_download_force: false
+wireless_download_archives: []
+wireless_download_symlinks: []
+wireless_download_symlink_become: true
+
+# Symlinks for non-Python Git tools
+wireless_git_symlinks: []

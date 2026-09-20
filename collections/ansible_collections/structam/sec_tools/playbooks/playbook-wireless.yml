@@ -1,0 +1,7 @@
+---
+- hosts: all
+  vars:
+    install_wireless: true
+  roles:
+    - role: wireless
+      when: install_wireless | bool

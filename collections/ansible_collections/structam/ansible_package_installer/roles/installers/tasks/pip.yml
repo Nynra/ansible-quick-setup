@@ -1,0 +1,44 @@
+- name: Upgrade pip
+  when:
+    - installer_pip_upgrade | bool
+    - installer_pip_packages | length > 0 or installer_pip_virtualenv | length > 0
+  become: "{{ installer_pip_become }}"
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    executable: "{{ installer_pip_executable if installer_pip_virtualenv | length == 0 else omit }}"
+    virtualenv: "{{ installer_pip_virtualenv if installer_pip_virtualenv | length > 0 else omit }}"
+    virtualenv_command: "{{ installer_pip_virtualenv_command if installer_pip_virtualenv | length > 0 else omit }}"
+
+- name: Upgrade pip in isolated environments
+  when: pip_environment.upgrade | default(installer_pip_upgrade) | bool
+  become: "{{ pip_environment.become | default(installer_pip_become) }}"
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    virtualenv: "{{ pip_environment.path }}"
+    virtualenv_command: "{{ pip_environment.virtualenv_command | default(installer_pip_virtualenv_command) }}"
+  loop: "{{ installer_pip_virtualenvs }}"
+  loop_control:
+    loop_var: pip_environment
+
+- name: Install python packages
+  when: installer_pip_packages | length > 0
+  become: "{{ installer_pip_become }}"
+  ansible.builtin.pip:
+    name: "{{ installer_pip_packages }}"
+    state: present
+    executable: "{{ installer_pip_executable if installer_pip_virtualenv | length == 0 else omit }}"
+    virtualenv: "{{ installer_pip_virtualenv if installer_pip_virtualenv | length > 0 else omit }}"
+    virtualenv_command: "{{ installer_pip_virtualenv_command if installer_pip_virtualenv | length > 0 else omit }}"
+
+- name: Install Python packages in isolated environments
+  become: "{{ pip_environment.become | default(installer_pip_become) }}"
+  ansible.builtin.pip:
+    name: "{{ pip_environment.packages }}"
+    state: present
+    virtualenv: "{{ pip_environment.path }}"
+    virtualenv_command: "{{ pip_environment.virtualenv_command | default(installer_pip_virtualenv_command) }}"
+  loop: "{{ installer_pip_virtualenvs }}"
+  loop_control:
+    loop_var: pip_environment

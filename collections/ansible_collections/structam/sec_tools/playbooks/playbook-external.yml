@@ -1,0 +1,7 @@
+---
+- hosts: all
+  vars:
+    install_external: true
+  roles:
+    - role: external
+      when: install_external | bool

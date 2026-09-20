@@ -1,0 +1,127 @@
+---
+- name: Set up Neovim with a kickstart.nvim config
+  block:
+    - name: Ensure add-apt-repository is available
+      when: nvim_use_ppa | bool and ansible_facts.get('distribution') == 'Ubuntu'
+      ansible.builtin.apt:
+        name: software-properties-common
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Add the neovim-ppa/unstable repository (recent Neovim builds)
+      when: nvim_use_ppa | bool and ansible_facts.get('distribution') == 'Ubuntu'
+      ansible.builtin.apt_repository:
+        repo: ppa:neovim-ppa/unstable
+        state: present
+      become: true
+
+    - name: Install Neovim and prerequisites
+      ansible.builtin.apt:
+        name:
+          - neovim
+          - git
+          - curl
+          - tar
+          - build-essential   # C compiler, needed to build treesitter parsers
+          - unzip
+          - ripgrep           # used by telescope.nvim (live grep)
+          - fd-find           # used by telescope.nvim (file finding)
+          - xclip             # system clipboard support
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Symlink fd-find's binary to fd (Debian/Ubuntu ships it as fdfind)
+      register: fd_find_stat
+      ansible.builtin.stat:
+        path: /usr/bin/fdfind
+      become: true
+
+    - name: Create fd symlink when fd-find is installed
+      when: fd_find_stat.stat.exists
+      ansible.builtin.file:
+        src: /usr/bin/fdfind
+        dest: /usr/local/bin/fd
+        state: link
+        force: true
+      become: true
+
+    - name: Ensure the target user's config directory exists
+      ansible.builtin.file:
+        path: "{{ target_user_home }}/.config"
+        state: directory
+        mode: '0755'
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Check whether an nvim config already exists
+      ansible.builtin.stat:
+        path: "{{ nvim_config_dir }}"
+      register: nvim_config_stat
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Configure kickstart.nvim when config is missing or forced
+      when: nvim_force or not nvim_config_stat.stat.exists
+      block:
+        - name: Check whether it's already a git checkout (likely already this config)
+          ansible.builtin.stat:
+            path: "{{ nvim_config_dir }}/.git"
+          register: nvim_git_stat
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Back up an existing, non-git nvim config
+          ansible.builtin.command:
+            argv:
+              - mv
+              - "{{ nvim_config_dir }}"
+              - "{{ nvim_config_dir }}.bak.{{ lookup('ansible.builtin.pipe', 'date +%s') }}"
+          when:
+            - nvim_config_stat.stat.exists
+            - not nvim_git_stat.stat.exists
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Clone the kickstart.nvim config
+          ansible.builtin.git:
+            repo: "{{ nvim_kickstart_repo }}"
+            dest: "{{ nvim_config_dir }}"
+            update: true
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Mark the Neovim configuration as role-owned
+          ansible.builtin.file:
+            path: "{{ nvim_config_dir }}/.general-server-management-managed"
+            state: touch
+            mode: '0644'
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Boot Nvim to perform the initial installation setup
+          ansible.builtin.command:
+            cmd: nvim --headless +qa
+          changed_when: true
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Install plugins via Mason (headless)
+          ansible.builtin.command:
+            cmd: "nvim --headless '+MasonInstall {{ item }}' +qa"
+          changed_when: true
+          loop:
+            - tree-sitter-cli
+            - markdownlint
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+        - name: Build the plugins (headless)
+          ansible.builtin.command:
+            cmd: nvim --headless "+TSUpdate" +qa
+          changed_when: true
+          become: "{{ target_user_become }}"
+          become_user: "{{ target_user }}"
+
+

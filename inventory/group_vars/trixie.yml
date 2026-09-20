@@ -1,6 +1,7 @@
 install_common_packages: true
 common_install_wireshark: false
 common_install_burp: false
-install_internal_packages: false
+common_install_zap: true
+install_internal_packages: true
 install_external_packages: false
 install_wireless_packages: false 

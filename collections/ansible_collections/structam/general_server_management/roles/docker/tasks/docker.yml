@@ -1,0 +1,61 @@
+---
+- name: "Check if Docker should be installed"
+  ansible.builtin.stat:
+    path: /usr/bin/docker
+  register: docker_stat
+
+- name: "Install docker"
+  when: not docker_stat.stat.exists
+  block:
+    - name: Install Docker using convenience script
+      become: true
+      ansible.builtin.shell: "curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh"
+      args:
+        executable: /bin/bash
+        creates: /usr/bin/docker
+
+    - name: Delete Docker convenience script
+      become: true
+      ansible.builtin.file:
+        path: get-docker.sh
+        state: absent
+
+    - name: Make sure the docker group exists
+      become: true
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: "Add user to docker group: {{ ansible_user_id }}"
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: true
+
+- name: Deploy Docker daemon configuration
+  when: docker_configure_daemon
+  become: true
+  ansible.builtin.template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart docker
+
+- name: Start and enable the docker service
+  become: true
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Pull specified Docker images
+  when: docker_images | length > 0
+  community.docker.docker_image:
+    name: "{{ item }}"
+    source: pull
+  loop: "{{ docker_images }}"
+  loop_control:
+    label: "{{ item }}"

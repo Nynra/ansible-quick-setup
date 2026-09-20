@@ -1,0 +1,70 @@
+---
+# Common apt packages to install
+installer_apt_cleanup: false
+installer_apt_install_recommends: true
+installer_apt_packages: []
+  # - tmux
+  # - xrdp
+  # - tcpdump
+  # - tshark
+
+# Pip packages
+installer_pip_packages: []
+installer_pip_upgrade: false
+# - poetry
+installer_pip_virtualenv: ""
+installer_pip_virtualenv_command: "python3 -m venv"
+installer_pip_executable: pip3
+installer_pip_become: false
+
+# Multiple isolated Python environments
+installer_pip_virtualenvs: []
+# - path: /opt/builder-venv
+#   packages:
+#     - build
+#     - wheel
+#   upgrade: true
+# - path: /opt/cracking-venv
+#   packages:
+#     - hashcat
+#     - impacket
+
+
+# Git repos
+installer_git_repos: []
+# - path: "/opt/recon-tools"
+#   dir_name: "defaultcredsearch"
+#   branch: "main"
+#   repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git"
+#   python_install: requirements
+installer_git_force: false
+installer_git_symlink_become: true
+
+# Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+# Multiple aliases can be created for the same tool by adding multiple entries with the same path but different alias and script values
+installer_git_python_script_symlinks: []
+# - {path: "/opt/recon-tools/defaultcredsearch", alias: "creds", script: "creds"}
+
+# Symlinks for Python scripts in a Git repository. The launcher uses the
+# repository's venv/bin/python to execute the repository-relative script.
+installer_git_python_file_symlinks: []
+# - {path: "/opt/tools/example-tool", alias: "example-tool", script: "src/example.py"}
+
+# Symlinks for git tools
+installer_git_symlinks: []
+# - {src: "/opt/recon-tools/defaultcredsearch/creds", dest: "/usr/local/bin/creds"}
+
+# Standalone file downloads (e.g. GitHub release binaries)
+installer_download_files: []
+# - {path: "/opt/tools", dest_name: "tool", url: "https://github.com/user/repo/releases/download/v1.0/tool-linux-amd64", mode: "0755", checksum: "sha256:abcdef..."}
+installer_download_become: true
+installer_download_force: false
+
+# Archive downloads that get extracted on the target (e.g. GitHub release tarballs/zips)
+installer_download_archives: []
+# - {path: "/opt/tools/example", url: "https://github.com/user/repo/releases/download/v1.0/tool-linux-amd64.tar.gz", creates: "/opt/tools/example/tool"}
+
+# Symlinks for downloaded files/archives
+installer_download_symlinks: []
+# - {src: "/opt/tools/example/tool", dest: "/usr/local/bin/tool"}
+installer_download_symlink_become: true

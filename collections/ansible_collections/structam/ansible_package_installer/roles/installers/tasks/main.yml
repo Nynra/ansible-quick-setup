@@ -1,0 +1,24 @@
+---
+- name: APT tasks
+  when: installer_apt_packages | length > 0
+  become: true
+  ansible.builtin.import_tasks: apt.yml
+
+- name: Python Packages
+  when: installer_pip_packages | length > 0 or installer_pip_virtualenvs | length > 0
+  ansible.builtin.import_tasks: pip.yml
+
+- name: Install Git Repositories and Tools
+  when:
+    - installer_git_repos | length > 0 or
+      installer_git_python_script_symlinks | length > 0 or
+      installer_git_python_file_symlinks | length > 0 or
+      installer_git_symlinks | length > 0
+  ansible.builtin.import_tasks: git.yml
+
+- name: Download Files and Archives
+  when:
+    - installer_download_files | length > 0 or
+      installer_download_archives | length > 0 or
+      installer_download_symlinks | length > 0
+  ansible.builtin.import_tasks: download.yml

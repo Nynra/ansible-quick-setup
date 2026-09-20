@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "{{ item.path }}/venv/bin/python" "{{ item.path }}/{{ item.script }}" "$@"

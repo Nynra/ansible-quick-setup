@@ -1,0 +1,7 @@
+---
+- name: Validate the environment role defaults
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: structam.general_server_management.env

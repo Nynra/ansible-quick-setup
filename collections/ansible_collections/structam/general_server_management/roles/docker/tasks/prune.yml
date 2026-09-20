@@ -1,0 +1,62 @@
+---
+- name: Prune stopped containers
+  when: docker_prune_containers
+  become: true
+  community.docker.docker_prune:
+    containers: true
+  register: docker_prune_containers_result
+
+- name: Show reclaimed space from containers
+  when: docker_prune_containers
+  ansible.builtin.debug:
+    msg: "Docker container prune reclaimed {{ docker_prune_containers_result.space_reclaimed }} bytes"
+
+- name: Prune unused images
+  when: docker_prune_images
+  become: true
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: "{{ false if docker_prune_images_all else true }}"
+  register: docker_prune_images_result
+
+- name: Show reclaimed space from images
+  when: docker_prune_images
+  ansible.builtin.debug:
+    msg: "Docker image prune reclaimed {{ docker_prune_images_result.space_reclaimed }} bytes"
+
+- name: Prune unused networks
+  when: docker_prune_networks
+  become: true
+  community.docker.docker_prune:
+    networks: true
+  register: docker_prune_networks_result
+
+- name: Show reclaimed space from networks
+  when: docker_prune_networks
+  ansible.builtin.debug:
+    msg: "Docker network prune reclaimed {{ docker_prune_networks_result.space_reclaimed }} bytes"
+
+- name: Prune unused volumes
+  when: docker_prune_volumes
+  become: true
+  community.docker.docker_prune:
+    volumes: true
+  register: docker_prune_volumes_result
+
+- name: Show reclaimed space from volumes
+  when: docker_prune_volumes
+  ansible.builtin.debug:
+    msg: "Docker volume prune reclaimed {{ docker_prune_volumes_result.space_reclaimed }} bytes"
+
+- name: Prune builder cache
+  when: docker_prune_builder_cache
+  become: true
+  community.docker.docker_prune:
+    builder_cache: true
+  register: docker_prune_builder_cache_result
+
+- name: Show reclaimed space from builder cache
+  when: docker_prune_builder_cache
+  ansible.builtin.debug:
+    msg: "Docker builder cache prune reclaimed {{ docker_prune_builder_cache_result.space_reclaimed }} bytes"

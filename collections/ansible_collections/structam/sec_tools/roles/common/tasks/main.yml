@@ -1,0 +1,41 @@
+---
+- name: Install common packages and tools
+  ansible.builtin.include_role:
+    name: structam.ansible_package_installer.installers
+  vars:
+    installer_apt_packages: "{{ common_apt_packages }}"
+    installer_apt_cleanup: "{{ common_apt_cleanup }}"
+    installer_pip_packages: "{{ common_pip_packages }}"
+    installer_pip_upgrade: "{{ common_pip_upgrade }}"
+    installer_pip_virtualenv: "{{ common_pip_virtualenv }}"
+    installer_pip_virtualenv_command: "{{ common_pip_virtualenv_command }}"
+    installer_pip_become: "{{ common_pip_become }}"
+    installer_git_repos: "{{ common_git_repos }}"
+    installer_git_force: "{{ common_git_force }}"
+    installer_git_python_script_symlinks: "{{ common_python_script_symlinks }}"
+    installer_git_python_file_symlinks: "{{ common_python_file_symlinks }}"
+    installer_git_symlinks: "{{ common_git_symlinks }}"
+    installer_git_symlink_become: "{{ common_git_symlink_become }}"
+    installer_download_files: "{{ common_download_files }}"
+    installer_download_become: "{{ common_download_become }}"
+    installer_download_force: "{{ common_download_force }}"
+    installer_download_archives: "{{ common_download_archives }}"
+    installer_download_symlinks: "{{ common_download_symlinks }}"
+    installer_download_symlink_become: "{{ common_download_symlink_become }}"
+
+- name: Install Wireshark, Tcpdump and Tshark
+  when: common_install_wireshark| default(false)
+  ansible.builtin.import_tasks: wireshark.yml
+
+- name: Install BurpSuite
+  when: common_install_burp | default(false)
+  ansible.builtin.import_tasks: burp-suite.yml
+
+- name: Install ZAP
+  when: common_install_zap | default(false)
+  ansible.builtin.import_tasks: zap.yml
+
+- name: Install Tmux Pentest Workspace Launcher
+  when: common_install_tmux_workspace | default(false)
+  ansible.builtin.import_tasks: pt-workspace.yml
+

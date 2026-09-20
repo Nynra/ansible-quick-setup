@@ -1,0 +1,33 @@
+# General
+target_user: "{{ ansible_user | default(ansible_user_id | default(lookup('ansible.builtin.env', 'USER'))) }}"
+target_user_home: "{{ ansible_user_dir | default(ansible_env.HOME | default('/home/' ~ target_user)) }}"
+target_user_become: false
+target_user_group: "{{ target_user }}"
+preferred_nerd_font: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/0xProto.zip
+preferred_nerd_font_checksum: ""
+font_cache_dir: "{{ target_user_home }}/.cache/general-server-management"
+font_install_dir: /usr/local/share/fonts
+
+# Bash setup
+bash_setup: false
+bash_force: false
+bash_uninstall: false
+term_uninstall: false
+bashrc_path: "{{ target_user_home }}/.bashrc"
+profile_path: "{{ target_user_home }}/.profile"
+
+# Tmux setup
+tmux_setup: false
+tmux_force: false
+tmux_uninstall: false
+tmux_config_path: "{{ target_user_home }}/.tmux.conf"
+tmux_plugins_manager_path: "{{ target_user_home }}/.tmux/plugins"
+
+# Neovim setup
+nvim_setup: false
+nvim_force: false
+nvim_uninstall: false
+nvim_config_dir: "{{ target_user_home }}/.config/nvim"
+nvim_kickstart_repo: "https://gitlab.eaglediksix.nl/Nynra/nvim-config"
+nvim_use_ppa: false
+nvim_remove_package: false

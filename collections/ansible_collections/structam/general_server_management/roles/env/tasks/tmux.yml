@@ -1,0 +1,46 @@
+---
+- name: Set up Tmux
+  block:
+    - name: Ensure tmux is installed
+      ansible.builtin.apt:
+        name: tmux
+        state: present
+      become: true
+
+    - name: Create tmux plugin directory
+      ansible.builtin.file:
+        path: "{{ tmux_plugins_manager_path }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ target_user }}"
+        group: "{{ target_user_group }}"
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Download tmux Plugin Manager
+      ansible.builtin.git:
+        repo: https://github.com/tmux-plugins/tpm
+        dest: "{{ tmux_plugins_manager_path }}/tpm"
+        version: master
+        update: true
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Manage the role-owned tmux configuration block
+      ansible.builtin.blockinfile:
+        path: "{{ tmux_config_path }}"
+        create: true
+        mode: '0644'
+        backup: true
+        marker: "# {mark} general-server-management tmux"
+        block: "{{ lookup('ansible.builtin.template', 'tmux.conf.j2') }}"
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Create Tmux Log Workspace Launcher
+      ansible.builtin.template:
+        src: tm-workspace.j2
+        dest: /usr/local/bin/tm-workspace
+        mode: '0755'
+      become: true
+

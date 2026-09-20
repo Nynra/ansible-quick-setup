@@ -1,0 +1,12 @@
+---
+- name: Remove useless apt cache
+  when: installer_apt_cleanup | bool
+  become: true
+  ansible.builtin.apt:
+    autoclean: true
+
+- name: Remove unused apt dependencies
+  when: installer_apt_cleanup | bool
+  become: true
+  ansible.builtin.apt:
+    autoremove: true

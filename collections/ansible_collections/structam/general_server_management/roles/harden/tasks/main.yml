@@ -1,0 +1,73 @@
+---
+- name: Set-up SSH
+  when: ssh_setup
+  block:
+  - name: Check the settings compatibility
+    ansible.builtin.assert:
+      that:
+        # If the local key should be copied the pubkey path should be defined
+        - not (ssh_set_local_pubkey and ssh_local_pubkey_path is not defined)
+
+  - name: Create a backup of the current SSH configuration
+    ansible.builtin.copy:
+      src: /etc/ssh/sshd_config
+      dest: /etc/ssh/sshd_config.bak
+      remote_src: yes
+      backup: yes
+
+  - name: Copy the local ssh key to the remote server
+    ansible.posix.authorized_key:
+      user: "{{ target_user }}"
+      state: present
+      key: "{{ lookup('file', ssh_local_pubkey_path) }}"
+    when: ssh_set_local_pubkey and not ansible_connection == "local"
+
+  - name: Secure SSH configuration
+    ansible.builtin.template:
+      src: sshd_config.j2
+      dest: /etc/ssh/sshd_config
+      owner: root
+      group: root
+      mode: '0600'
+    notify:
+      - Restart SSH
+
+- name: Set up UFW
+  when: ufw_setup
+  block:
+  - name: Install security packages
+    ansible.builtin.apt:
+      name: 
+        - ufw
+      state: present
+
+  - name: Configure UFW default deny policy
+    community.general.ufw:
+      default: deny
+      direction: incoming
+
+  - name: Configure UFW default allow policy (outgoing)
+    community.general.ufw:
+      default: allow
+      direction: outgoing
+
+  - name: Allow SSH through UFW
+    community.general.ufw:
+      rule: allow
+      port: "{{ ssh_port | string }}"
+      src: "{{ item }}"
+    loop: "{{ ufw_allow_ssh_from }}"
+    when: ssh_setup and not ansible_connection == "local" and ufw_allow_ssh_from is defined and ufw_allow_ssh_from | length > 0
+
+  - name: Allow additional ports through UFW
+    community.general.ufw:
+      rule: allow
+      port: "{{ item }}"
+      proto: tcp
+    loop: "{{ ufw_allowed_ports }}"
+    when: ufw_allowed_ports is defined and ufw_allowed_ports | length > 0
+
+  - name: Enable UFW
+    community.general.ufw:
+      state: enabled
+      logging: 'on'

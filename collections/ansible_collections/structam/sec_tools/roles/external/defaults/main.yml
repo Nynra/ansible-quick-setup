@@ -1,0 +1,41 @@
+---
+# APT packages to install for external tools
+external_apt_packages:
+- assetfinder
+- libxml2-dev
+- libxslt1-dev
+external_apt_cleanup: true
+
+# Python packages to install with pip
+external_pip_packages: []
+external_pip_upgrade: false
+external_pip_virtualenv: "/opt/sec-tools/external-venv"
+external_pip_virtualenv_command: "python3 -m venv"
+external_pip_become: true
+
+# Git repositories to clone
+external_git_repos:
+- {path: "/opt/tools/osint", dir_name: "knockpy", repo: "https://github.com/guelfoweb/knock.git", python_install: "requirements"}
+- {path: "/opt/tools/osint", dir_name: "spiderfoot", repo: "https://github.com/smicallef/spiderfoot.git", python_install: "requirements"}
+- {path: "/opt/tools/osint", dir_name: "BlackWidow", repo: "https://github.com/1N3/BlackWidow.git"}
+- {path: "/opt/tools/osint", dir_name: "google-dork-scan", repo: "https://github.com/IvanGlinkin/Fast-Google-Dorks-Scan.git"}
+- {path: "/opt/tools/osint", dir_name: "checkpwnedemails", repo: "https://github.com/Techno-Hwizrdry/checkpwnedemails.git"}
+- {path: "/opt/tools/osint", dir_name: "github-search", repo: "https://github.com/gwen001/github-search.git"}
+external_git_force: false
+external_git_symlink_become: true
+
+
+# Executable symlinks for Python tools installed in a virtual environment
+external_git_python_script_symlinks: []
+external_git_python_file_symlinks: []
+
+# Standalone file downloads
+external_download_files: []
+external_download_become: true
+external_download_force: false
+external_download_archives: []
+external_download_symlinks: []
+external_download_symlink_become: true
+
+# Symlinks for non-Python Git tools
+external_git_symlinks: []

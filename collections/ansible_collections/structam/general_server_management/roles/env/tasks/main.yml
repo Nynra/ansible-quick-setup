@@ -1,0 +1,13 @@
+---
+- name: Manage terminal environment
+  when: bash_setup or term_uninstall or bash_uninstall
+  ansible.builtin.include_tasks: "{{ ((term_uninstall or bash_uninstall) | bool) | ternary('term-uninstall.yml', 'term.yml') }}"
+
+- name: Manage Neovim
+  when: nvim_setup or nvim_uninstall
+  ansible.builtin.include_tasks: "{{ (nvim_uninstall | bool) | ternary('nvim-uninstall.yml', 'nvim.yml') }}"
+
+- name: Manage Tmux
+  when: tmux_setup or tmux_uninstall
+  ansible.builtin.include_tasks: "{{ (tmux_uninstall | bool) | ternary('tmux-uninstall.yml', 'tmux.yml') }}"
+

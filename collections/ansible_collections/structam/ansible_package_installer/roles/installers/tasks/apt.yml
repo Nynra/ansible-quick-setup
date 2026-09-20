@@ -1,0 +1,11 @@
+---
+- name: Install APT packages
+  when: installer_apt_packages | length > 0
+  ansible.builtin.apt:
+    update_cache: true
+    install_recommends: "{{ installer_apt_install_recommends }}"
+    name: "{{ installer_apt_packages }}"
+    state: present
+  notify:
+    - Remove useless apt cache
+    - Remove unused apt dependencies

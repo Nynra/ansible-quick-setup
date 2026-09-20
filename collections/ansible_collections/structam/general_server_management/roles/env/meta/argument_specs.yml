@@ -1,0 +1,83 @@
+---
+argument_specs:
+  main:
+    short_description: Manage a user's terminal, Tmux, and Neovim environment.
+    options:
+      target_user:
+        type: str
+        required: true
+      target_user_home:
+        type: path
+        required: true
+      target_user_become:
+        type: bool
+        default: false
+      target_user_group:
+        type: str
+        default: "{{ target_user }}"
+      preferred_nerd_font:
+        type: str
+        default: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/0xProto.zip"
+      preferred_nerd_font_checksum:
+        type: str
+        default: ""
+      font_cache_dir:
+        type: path
+        default: "{{ target_user_home }}/.cache/general-server-management"
+      font_install_dir:
+        type: path
+        default: /usr/local/share/fonts
+      bash_setup:
+        type: bool
+        default: false
+      bash_force:
+        type: bool
+        default: false
+      bash_uninstall:
+        type: bool
+        default: false
+      term_uninstall:
+        type: bool
+        default: false
+      bashrc_path:
+        type: path
+        default: "{{ target_user_home }}/.bashrc"
+      profile_path:
+        type: path
+        default: "{{ target_user_home }}/.profile"
+      tmux_setup:
+        type: bool
+        default: false
+      tmux_force:
+        type: bool
+        default: false
+      tmux_uninstall:
+        type: bool
+        default: false
+      tmux_config_path:
+        type: path
+        default: "{{ target_user_home }}/.tmux.conf"
+      tmux_plugins_manager_path:
+        type: path
+        default: "{{ target_user_home }}/.tmux/plugins"
+      nvim_setup:
+        type: bool
+        default: false
+      nvim_force:
+        type: bool
+        default: false
+      nvim_uninstall:
+        type: bool
+        default: false
+      nvim_config_dir:
+        type: path
+        default: "{{ target_user_home }}/.config/nvim"
+      nvim_kickstart_repo:
+        type: str
+        default: "https://gitlab.eaglediksix.nl/Nynra/nvim-config"
+      nvim_use_ppa:
+        type: bool
+        default: false
+      nvim_remove_package:
+        type: bool
+        default: false
