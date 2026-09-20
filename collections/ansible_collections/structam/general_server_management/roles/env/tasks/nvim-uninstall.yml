@@ -1,0 +1,47 @@
+---
+- name: Uninstall Neovim and remove config
+  block:
+    - name: Remove Neovim package
+      when: nvim_remove_package | bool
+      ansible.builtin.apt:
+        name: neovim
+        state: absent
+      become: true
+
+    - name: Remove fd symlink created for fdfind
+      register: fd_link_stat
+      ansible.builtin.stat:
+        path: /usr/local/bin/fd
+        follow: false
+      become: true
+
+    - name: Remove role-owned fd symlink
+      when:
+        - fd_link_stat.stat.islnk | default(false)
+        - fd_link_stat.stat.lnk_source | default('') == '/usr/bin/fdfind'
+      ansible.builtin.file:
+        path: /usr/local/bin/fd
+        state: absent
+      become: true
+
+    - name: Check whether the Neovim config is role-owned
+      ansible.builtin.stat:
+        path: "{{ nvim_config_dir }}/.general-server-management-managed"
+      register: nvim_managed_stat
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Remove role-owned Neovim config directory
+      when: nvim_managed_stat.stat.exists
+      ansible.builtin.file:
+        path: "{{ nvim_config_dir }}"
+        state: absent
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Remove the neovim-ppa/unstable repository
+      when: nvim_use_ppa | bool and ansible_facts.get('distribution') == 'Ubuntu'
+      ansible.builtin.apt_repository:
+        repo: ppa:neovim-ppa/unstable
+        state: absent
+      become: true

@@ -1,0 +1,176 @@
+---
+argument_specs:
+  main:
+    short_description: Install APT packages, Python packages, Git repositories, and tools.
+    options:
+      installer_apt_packages:
+        type: list
+        elements: str
+        default: []
+      installer_apt_cleanup:
+        type: bool
+        default: false
+      installer_apt_install_recommends:
+        type: bool
+        default: true
+      installer_pip_packages:
+        type: list
+        elements: str
+        default: []
+      installer_pip_upgrade:
+        type: bool
+        default: false
+      installer_pip_virtualenv:
+        type: str
+        default: ""
+      installer_pip_virtualenv_command:
+        type: str
+        default: "python3 -m venv"
+      installer_pip_executable:
+        type: str
+        default: pip3
+      installer_pip_become:
+        type: bool
+        default: false
+      installer_pip_virtualenvs:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          packages:
+            type: list
+            elements: str
+            required: true
+          upgrade:
+            type: bool
+          virtualenv_command:
+            type: str
+          become:
+            type: bool
+      installer_git_repos:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          dir_name:
+            type: str
+            required: true
+          repo:
+            type: str
+            required: true
+          branch:
+            type: str
+            default: main
+          python_install:
+            type: str
+            choices:
+              - setup
+              - requirements
+      installer_git_force:
+        type: bool
+        default: false
+      installer_git_python_script_symlinks:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          script:
+            type: str
+            required: true
+          alias:
+            type: str
+            required: true
+      installer_git_python_file_symlinks:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          script:
+            type: str
+            required: true
+          alias:
+            type: str
+            required: true
+      installer_git_symlinks:
+        type: list
+        default: []
+        elements: dict
+        options:
+          src:
+            type: str
+            required: true
+          dest:
+            type: str
+            required: true
+      installer_git_symlink_become:
+        type: bool
+        default: true
+      installer_download_files:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          dest_name:
+            type: str
+            required: true
+          url:
+            type: str
+            required: true
+          mode:
+            type: str
+            default: "0755"
+          checksum:
+            type: str
+          force:
+            type: bool
+      installer_download_become:
+        type: bool
+        default: true
+      installer_download_force:
+        type: bool
+        default: false
+      installer_download_archives:
+        type: list
+        default: []
+        elements: dict
+        options:
+          path:
+            type: str
+            required: true
+          url:
+            type: str
+            required: true
+          creates:
+            type: str
+          extra_opts:
+            type: list
+            elements: str
+      installer_download_symlinks:
+        type: list
+        default: []
+        elements: dict
+        options:
+          src:
+            type: str
+            required: true
+          dest:
+            type: str
+            required: true
+      installer_download_symlink_become:
+        type: bool
+        default: true

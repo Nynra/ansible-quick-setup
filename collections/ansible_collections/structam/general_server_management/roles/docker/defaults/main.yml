@@ -1,0 +1,21 @@
+---
+# Installation
+docker_install: true
+docker_configure_daemon: false
+
+# Daemon config (only applied when docker_configure_daemon is true)
+docker_data_root: "/var/lib/docker"
+docker_metrics_host: "127.0.0.1"
+docker_metrics_port: 9323
+
+# Images to pull after install
+docker_images: []
+
+# Pruning
+docker_prune_enabled: false
+docker_prune_containers: true
+docker_prune_images: true
+docker_prune_images_all: false
+docker_prune_networks: true
+docker_prune_volumes: false
+docker_prune_builder_cache: true

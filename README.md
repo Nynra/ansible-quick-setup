@@ -18,9 +18,14 @@ or using python
 python3 -m pip install ansible
 ```
 
-## Roles
+## Collections and Roles
 
-To decide which roles you would like to do, edit the `playbook.yml` file.
+The playbook consumes the `structam.sec_tools` collection. The setup script
+installs it and its package-installer dependency from the Git repositories in
+`requirements.yml`.
+
+The common role is enabled by default. To also install internal testing tools,
+uncomment the `structam.sec_tools.internal` role in `playbook.yml`.
 
 Ex: If you are performing an internal penetration test, the site file should look like this:
 
@@ -29,25 +34,61 @@ Ex: If you are performing an internal penetration test, the site file should loo
 ---
 - hosts: all
   roles:
-    - common 
-    - internal
+    - role: structam.sec_tools.common
+    - role: structam.sec_tools.internal
 ```
 
 Vice versa for external, or even both! They can be integrated to include all tools for each portion of a test.
 
 ### Local Execution
 
- After ansible is installed on your local kali host, clone this repo and run ansible playbook.
+After cloning this repository, run the setup script from its root directory.
 
 ```bash
-ansible-playbook -i ansible/<platform-file> playbook.yml
+./setup.bash
+```
+
+The script will:
+
+- create or reuse a local `.venv`
+- install Ansible if needed
+- install the required collections from `requirements.yml`
+- let you choose an inventory from `inventory/`
+- show a final summary before running the playbook
+- optionally remove the venv after the run
+
+Available inventory files include:
+
+- `desktop.yml` for desktop hosts
+- `htb.yml` for Hack The Box-style targets
+- `trixie.yml` for Debian Trixie hosts
+
+To run Ansible directly after installing the requirements:
+
+```bash
+ansible-playbook -i inventory/desktop.yml playbook.yml -K
+```
+
+You can also skip the extra confirmation prompts in non-interactive use:
+
+```bash
+./setup.bash --auto
+./setup.bash --auto --inventory inventory/desktop.yml
+```
+
+Or pass extra arguments through to `ansible-playbook`:
+
+```bash
+./setup.bash -- --tags common
+./setup.bash --inventory inventory/desktop.yml -- --check
 ```
 
 ### Set inventory
 
 This playbook is intented to automate a defaut offensive environment on kali hosts. In order to use this playbook efficently, it should be run against an inventory of kali hosts. This can be done by creating an inventory of hosts.
 
-To configure the hosts inventory, open and edit the hosts.ini file to include the hosts in the following manner. This is just an example.
+To configure a host, edit the appropriate inventory file. The group name must
+match the corresponding file under `inventory/group_vars/`.
 
 ```yml
 parrot:

@@ -1,0 +1,33 @@
+{
+ "collection_info": {
+  "namespace": "structam",
+  "name": "ansible_package_installer",
+  "version": "2.1.0",
+  "authors": [
+   "Nynra <nynradev@pm.me>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "setup",
+   "maintenance"
+  ],
+  "description": "An Ansible collection for installing APT packages, Python packages, Git repositories, and command-line tools.",
+  "license": [],
+  "license_file": null,
+  "dependencies": {
+   "community.general": ">=8.0.0"
+  },
+  "repository": "https://gitlab.eaglediksix.nl/ansible/collections/ansible-package-installer",
+  "documentation": null,
+  "homepage": null,
+  "issues": null
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "873f0265f59b6dcac5683c678e57e6f1d7e4a9729cfe1f9ced2131b6adea2c53",
+  "format": 1
+ },
+ "format": 1
+}

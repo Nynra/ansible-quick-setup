@@ -1,0 +1,70 @@
+---
+- name: Install and configure the font
+  block:
+  - name: Ensure the font cache directory exists
+    ansible.builtin.file:
+      path: "{{ font_cache_dir }}"
+      state: directory
+      mode: '0755'
+    become: "{{ target_user_become }}"
+    become_user: "{{ target_user }}"
+
+  - name: Download the preferred Nerd Font
+    ansible.builtin.get_url:
+      url: "{{ preferred_nerd_font }}"
+      dest: "{{ font_cache_dir }}/nerd-font.zip"
+      checksum: "{{ preferred_nerd_font_checksum if preferred_nerd_font_checksum | length > 0 else omit }}"
+      mode: '0644'
+    become: "{{ target_user_become }}"
+    become_user: "{{ target_user }}"
+
+  - name: Ensure the system font directory exists
+    ansible.builtin.file:
+      path: "{{ font_install_dir }}"
+      state: directory
+      mode: '0755'
+    become: true
+
+  - name: Unzip the Nerd Font
+    ansible.builtin.unarchive:
+      src: "{{ font_cache_dir }}/nerd-font.zip"
+      dest: "{{ font_install_dir }}"
+      remote_src: yes
+      creates: "{{ font_install_dir }}/0xProtoNerdFont-Regular.ttf"
+    become: true
+
+  - name: Update font cache
+    ansible.builtin.command:
+      cmd: "fc-cache -f -v"
+    become: true
+    changed_when: false
+
+- name: Set up bash environment
+  block:
+    - name: Set bash as default shell
+      ansible.builtin.user:
+        name: "{{ target_user }}"
+        shell: /bin/bash
+      become: true
+
+    - name: Manage the role-owned .bashrc block
+      ansible.builtin.blockinfile:
+        path: "{{ bashrc_path }}"
+        create: true
+        mode: '0644'
+        backup: true
+        marker: "# {mark} general-server-management bash"
+        block: "{{ lookup('ansible.builtin.template', 'bashrc.j2') }}"
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"
+
+    - name: Manage the role-owned .profile block
+      ansible.builtin.blockinfile:
+        path: "{{ profile_path }}"
+        create: true
+        mode: '0644'
+        backup: true
+        marker: "# {mark} general-server-management profile"
+        block: "{{ lookup('ansible.builtin.template', 'profile.j2') }}"
+      become: "{{ target_user_become }}"
+      become_user: "{{ target_user }}"

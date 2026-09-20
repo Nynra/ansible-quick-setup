@@ -1,0 +1,76 @@
+---
+- name: Download standalone files (e.g. GitHub release binaries)
+  when: installer_download_files | length > 0
+  block:
+    - name: Ensure download destination directories exist
+      become: "{{ installer_download_become }}"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ installer_download_files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Download file
+      become: "{{ installer_download_become }}"
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.path }}/{{ item.dest_name }}"
+        mode: "{{ item.mode | default('0755') }}"
+        checksum: "{{ item.checksum | default(omit) }}"
+        force: "{{ item.force | default(installer_download_force) }}"
+      loop: "{{ installer_download_files }}"
+      loop_control:
+        label: "{{ item.url }}"
+
+
+- name: Download and extract archives (e.g. GitHub release tarballs/zips)
+  when: installer_download_archives | length > 0
+  block:
+    - name: Ensure archive destination directories exist
+      become: "{{ installer_download_become }}"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ installer_download_archives }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Download and extract archive
+      become: "{{ installer_download_become }}"
+      ansible.builtin.unarchive:
+        src: "{{ item.url }}"
+        dest: "{{ item.path }}"
+        remote_src: true
+        creates: "{{ item.creates | default(omit) }}"
+        extra_opts: "{{ item.extra_opts | default(omit) }}"
+      loop: "{{ installer_download_archives }}"
+      loop_control:
+        label: "{{ item.url }}"
+
+    - name: Set archive ownership recursively
+      become: "{{ installer_download_become }}"
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}"
+        recurse: true
+      loop: "{{ installer_download_archives }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+
+- name: Create symlinks for downloaded files/archives
+  when: installer_download_symlinks | length > 0
+  block:
+    - name: Create symlink for downloaded tools
+      become: "{{ installer_download_symlink_become }}"
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+        force: true
+      loop: "{{ installer_download_symlinks }}"
+      loop_control:
+        label: "{{ item.src }}"

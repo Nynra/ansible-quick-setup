@@ -1,0 +1,29 @@
+---
+- name: Uninstall Tmux and remove config
+  block:
+  - name: Remove tmux package
+    ansible.builtin.apt:
+      name: tmux
+      state: absent
+    become: true
+
+  - name: Remove the role-owned tmux configuration block
+    ansible.builtin.blockinfile:
+      path: "{{ tmux_config_path }}"
+      marker: "# {mark} general-server-management tmux"
+      state: absent
+    become: "{{ target_user_become }}"
+    become_user: "{{ target_user }}"
+
+  - name: Remove the role-owned TPM checkout
+    ansible.builtin.file:
+      path: "{{ tmux_plugins_manager_path }}/tpm"
+      state: absent
+    become: "{{ target_user_become }}"
+    become_user: "{{ target_user }}"
+
+  - name: Remove Tmux Log Workspace Launcher
+    ansible.builtin.file:
+      path: /usr/local/bin/tm-workspace
+      state: absent
+    become: true

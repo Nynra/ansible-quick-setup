@@ -1,0 +1,8 @@
+---
+- name: Install and configure Docker
+  when: docker_install | default(true)
+  ansible.builtin.import_tasks: docker.yml
+
+- name: Prune Docker resources
+  when: docker_prune_enabled | default(false)
+  ansible.builtin.import_tasks: prune.yml

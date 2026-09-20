@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Nynra
+  description: Manage a user's Bash, Tmux, and Neovim environment on Debian-family systems.
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  license: MIT
+  galaxy_tags:
+    - environment
+    - bash
+    - tmux
+    - neovim
+
+allow_duplicates: true

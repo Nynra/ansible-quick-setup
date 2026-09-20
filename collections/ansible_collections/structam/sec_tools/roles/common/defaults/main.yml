@@ -1,0 +1,123 @@
+---
+common_install_tmux_workspace: true
+
+# common apt packages to install
+common_apt_packages:
+- xrdp
+- tcpdump
+- tshark
+- python3-setuptools
+- python3-openssl
+- python3-pip
+- python3-venv
+- build-essential
+- bind9-dnsutils
+- ncat
+- tk-dev
+- gobuster
+- python3-pcapy
+
+common_apt_cleanup: true
+
+common_pip_upgrade: false
+common_pip_virtualenv: "/opt/tools-venv"
+common_pip_virtualenv_command: "python3 -m venv"
+common_pip_become: true
+
+# pip packages
+common_pip_packages:
+- dirhunt
+- getsploit
+- pipenv
+- python3-ldap
+- pywhat
+
+# Common git repos
+common_git_repos:
+- {path: "/opt/tools/scripts", dir_name: "Pentest-Scripts", repo: "https://github.com/averagesecurityguy/scripts.git"}
+- {path: "/opt/tools/recon", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git", python_install: "requirements"}
+- {path: "/opt/tools/recon", dir_name: "hash-identifier", repo: "https://github.com/HashPals/Name-That-Hash.git"}
+- {path: "/opt/tools/recon", dir_name: "Hasher", repo: "https://github.com/FortyNorthSecurity/Hasher.git"}
+- {path: "/opt/tools/recon", dir_name: "findsploit", repo: "https://github.com/1N3/Findsploit.git"}
+- {path: "/opt/tools/recon", dir_name: "payload-generator", repo: "https://github.com/g0tmi1k/msfpc.git"}
+- {path: "/opt/tools/recon", dir_name: "dirsearch", repo: "https://github.com/maurosoria/dirsearch.git"}
+
+- {path: "/opt/tools/network", dir_name: "nlzr", repo: "https://github.com/noahpowers/nlzr.git"}
+common_git_force: false
+common_git_symlink_become: true
+
+# Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+# Multiple aliases can be created for the same tool by adding multiple entries with the same path but different alias and script values
+common_python_script_symlinks: []
+common_python_file_symlinks: []
+
+# Symlinks for git tools
+common_git_symlinks:
+- {src: "/opt/tools/recon/defaultcredsearch/creds", dest: "/usr/local/bin/creds"}
+
+# Standalone file downloads
+common_download_files: []
+common_download_become: true
+common_download_force: false
+common_download_archives: []
+common_download_symlinks: []
+common_download_symlink_become: true
+
+# GoLang Tools -- Only on external
+common_go_tools: []
+
+# Burp Suite variables
+install_burp: false
+burpsuite_version: "2026.3.2"
+burpsuite_install_dir: "/opt/burpsuite"
+ 
+# --- Version and integrity ---------------------------------------------
+install_zap: false
+zap_version: "2.17.0"
+ 
+# Strongly recommended. Grab the SHA-256 for ZAP_<version>_Linux.tar.gz from
+# https://github.com/zaproxy/zaproxy/releases and set it as "sha256:<hash>".
+# Left empty, the download is not verified.
+zap_checksum: ""
+ 
+zap_download_url: >-
+  https://github.com/zaproxy/zaproxy/releases/download/v{{ zap_version }}/ZAP_{{ zap_version }}_Linux.tar.gz
+ 
+# --- Paths --------------------------------------------------------------
+zap_base_dir: /opt
+zap_install_dir: "{{ zap_base_dir }}/ZAP_{{ zap_version }}"
+zap_current_link: "{{ zap_base_dir }}/zap"
+zap_download_dir: /var/cache/ansible-zap
+ 
+# Symlinks created under /usr/local/bin pointing at zap.sh.
+zap_bin_links:
+  - /usr/local/bin/zap.sh
+  - /usr/local/bin/zap
+ 
+# --- Java ---------------------------------------------------------------
+# ZAP 2.17 requires Java 17 or newer. Use openjdk-21-jre-headless on newer
+# releases, or the non-headless JRE if you want the desktop GUI.
+zap_java_package: openjdk-17-jre-headless
+ 
+# --- Behaviour ----------------------------------------------------------
+# Remove the tarball (~220 MB) once it has been unpacked.
+zap_cleanup_archive: true
+ 
+# Refresh the apt cache if it is older than this (seconds).
+zap_apt_cache_valid_time: 3600
+ 
+# --- Optional headless daemon -------------------------------------------
+zap_daemon_enabled: false
+zap_daemon_user: zap
+zap_daemon_group: zap
+zap_daemon_home: /var/lib/zap
+zap_daemon_host: 127.0.0.1
+zap_daemon_port: 8080
+ 
+# Required when zap_daemon_enabled is true. Keep it in ansible-vault.
+zap_daemon_api_key: ""
+ 
+# Extra arguments appended to ExecStart, one per list item, e.g.
+#   - "-config connection.timeoutInSecs=60"
+#   - "-addonupdate"
+zap_daemon_extra_options: []

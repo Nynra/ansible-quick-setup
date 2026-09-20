@@ -1,0 +1,36 @@
+---
+- name: Ensure role is used on Debian or Ubuntu
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution in ['Debian', 'Ubuntu']
+    fail_msg: "This role only supports Debian and Ubuntu."
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: "{{ manage_cache_valid_time }}"
+  become: true
+  when: manage_update_cache
+
+- name: Upgrade packages
+  ansible.builtin.apt:
+    upgrade: "{{ manage_upgrade_type }}"
+    autoremove: "{{ manage_autoremove }}"
+  become: true
+  when: manage_upgrade
+
+- name: Check whether reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: manage_reboot_required
+  changed_when: false
+
+- name: Reboot host when required
+  ansible.builtin.reboot:
+    reboot_timeout: "{{ manage_reboot_timeout }}"
+    connect_timeout: "{{ manage_reboot_connect_timeout }}"
+    test_command: "{{ manage_reboot_test_command }}"
+  become: true
+  when:
+    - manage_reboot_if_required
+    - manage_reboot_required.stat.exists

@@ -1,0 +1,56 @@
+---
+# APT packages to install for internal tools
+internal_apt_packages: []
+internal_apt_cleanup: true
+
+# Python packages to install with pip
+internal_pip_packages:
+- mitm6
+- minikerberos
+internal_pip_upgrade: false
+internal_pip_virtualenv: "/opt/sec-tools/internal-venv"
+internal_pip_virtualenv_command: "python3 -m venv"
+internal_pip_become: true
+
+# Git repositories to clone
+internal_git_repos:
+# - {path: "/opt/tools/tunneling", dir_name: "proxychains", repo: "https://github.com/haad/proxychains.git"}
+- {path: "/opt/tools/tunneling", dir_name: "sshuttle", repo: "https://github.com/sshuttle/sshuttle.git"}
+- {path: "/opt/tools/tunneling", dir_name: "ptunnel-ng", repo: "https://github.com/utoni/ptunnel-ng.git"}
+- {path: "/opt/tools/tunneling", dir_name: "rpivot", repo: "https://github.com/klsecservices/rpivot.git"}
+
+- {path: "/opt/tools/recon", dir_name: "LinEnum", repo: "https://github.com/rebootuser/LinEnum.git"}
+- {path: "/opt/tools/recon", dir_name: "LinPEAs", repo: "https://github.com/carlospolop/PEASS-ng.git"}
+- {path: "/opt/tools/recon", dir_name: "LinuxSmartEnumeration", repo: "https://github.com/diego-treitos/linux-smart-enumeration.git"}
+- {path: "/opt/tools/recon", dir_name: "exploit-suggester", repo: "https://github.com/jondonas/linux-exploit-suggester-2.git"}
+
+- {path: "/opt/tools/escalation", dir_name: "LinuxPrivChecker", repo: "https://github.com/sleventyeleven/linuxprivchecker.git"}
+- {path: "/opt/tools/escalation", dir_name: "SudoKiller", repo: "https://github.com/TH3xACE/SUDO_KILLER.git"}
+- {path: "/opt/tools/escalation", dir_name: "rootend", repo: "https://github.com/twelvesec/rootend.git"}
+- {path: "/opt/tools/escalation", dir_name: "BeRoot", repo: "https://github.com/AlessandroZ/BeRoot.git"}
+
+# - {path: "/opt/tools/network", dir_name: "bloodhound", repo: "https://github.com/fox-it/BloodHound.py.git"}
+- {path: "/opt/tools/network", dir_name: "certi", repo: "https://github.com/zer1t0/certi.git", python_install: "requirements"}
+- {path: "/opt/tools/network", dir_name: "certipy", repo: "https://github.com/ly4k/Certipy.git", python_install: "setup"}
+- {path: "/opt/tools/network", dir_name: "PCredz", repo: "https://github.com/lgandx/PCredz.git"}
+- {path: "/opt/tools/network", dir_name: "impacket", repo: "https://github.com/SecureAuthCorp/impacket.git"}
+- {path: "/opt/tools/network", dir_name: "PKINITtools", repo: "https://github.com/dirkjanm/PKINITtools"}
+- {path: "/opt/tools/network", dir_name: "pywhisker", repo: "https://github.com/ShutdownRepo/pywhisker.git", python_install: "setup"}
+- {path: "/opt/tools/network", dir_name: "pyWhat-pcap", repo: "https://github.com/bee-san/pyWhat.git"}
+internal_git_force: false
+internal_git_symlink_become: true
+
+# Executable symlinks for Python tools installed in a virtual environment
+internal_git_python_script_symlinks: []
+internal_git_python_file_symlinks: []
+
+# Standalone file downloads
+internal_download_files: []
+internal_download_become: true
+internal_download_force: false
+internal_download_archives: []
+internal_download_symlinks: []
+internal_download_symlink_become: true
+
+# Symlinks for non-Python Git tools
+internal_git_symlinks: []

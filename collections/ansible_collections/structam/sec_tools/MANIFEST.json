@@ -1,0 +1,34 @@
+{
+ "collection_info": {
+  "namespace": "structam",
+  "name": "sec_tools",
+  "version": "1.1.0",
+  "authors": [
+   "Nynra <nynradev@pm.me>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "pentesting",
+   "security"
+  ],
+  "description": "An Ansible collection for quickly setting up a pentesting box.",
+  "license": [],
+  "license_file": null,
+  "dependencies": {
+   "community.general": ">=8.0.0",
+   "structam.ansible_package_installer": ">=2.0.0"
+  },
+  "repository": "https://gitlab.eaglediksix.nl/ansible/collections/sec-tools",
+  "documentation": null,
+  "homepage": null,
+  "issues": null
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "13c2159be2819a85e3afcc289f390decc412bcc24fbbee0cece12e320cbc2cb0",
+  "format": 1
+ },
+ "format": 1
+}

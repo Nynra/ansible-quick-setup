@@ -1,0 +1,20 @@
+---
+ssh_setup: true
+ssh_port: 22
+ssh_max_auth_tries: 3
+ssh_local_pubkey_path: "/home/nynra/.ssh/id_rsa.pub"
+ssh_set_local_pubkey: true
+ssh_allow_password_auth: no
+ssh_allow_root_login: no
+ssh_allow_x11_forwarding: no
+ssh_allow_tunnel: no
+
+ufw_setup: true
+# If ssh_setup is enabled ssh will be auto added to the allowed ufw ports
+ufw_allowed_ports: []
+# Local and netbird subnets
+ufw_allow_ssh_from:
+  - 192.168.0.0/16
+  - 100.100.0.0/16
+ufw_enable: true
+

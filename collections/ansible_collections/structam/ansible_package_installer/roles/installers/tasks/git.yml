@@ -1,0 +1,138 @@
+---
+- name: Install tools from github and set permissions
+  when: installer_git_repos | length > 0
+  block:
+    - name: Ensure repository parent directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Cloning repository
+      become: true
+      ansible.builtin.git:
+        repo: "{{ item.repo }}"
+        dest: "{{ item.path }}/{{ item.dir_name }}"
+        version: "{{ item.branch | default(omit) }}"
+        force: "{{ installer_git_force }}"
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.repo }}"
+
+    - name: Set repository ownership recursively
+      become: true
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}/{{ item.dir_name }}"
+        recurse: true
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.repo }}"
+
+- name: Set up python tools using setup.py and pyproject.toml
+  when: installer_git_repos | length > 0
+  block:
+    - name: Setup python virtual environments and install packages using setup.py or pyproject.toml
+      when: item.python_install | default('') == 'setup'
+      become: true
+      ansible.builtin.pip:
+        name: "{{ item.path }}/{{ item.dir_name }}"
+        editable: true
+        virtualenv: "{{ item.path }}/{{ item.dir_name }}/venv"
+        virtualenv_command: python3 -m venv
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.dir_name }}"
+
+    - name: Set virtual environment ownership recursively
+      when: item.python_install | default('') == 'setup'
+      become: true
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}/{{ item.dir_name }}/venv"
+        recurse: true
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.dir_name }}"
+
+- name: Install package dependencies from requirements.txt
+  when: installer_git_repos | length > 0
+  block:
+    - name: Install pip dependencies
+      when: item.python_install | default('') == 'requirements'
+      become: true
+      ansible.builtin.pip:
+        requirements: "{{ item.path }}/{{ item.dir_name }}/requirements.txt"
+        virtualenv: "{{ item.path }}/{{ item.dir_name }}/venv"
+        virtualenv_command: python3 -m venv
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.dir_name }}"
+
+    - name: Set virtual environment ownership recursively
+      when: item.python_install | default('') == 'requirements'
+      become: true
+      ansible.builtin.file:
+        owner: "{{ ansible_user_id }}"
+        path: "{{ item.path }}/{{ item.dir_name }}/venv"
+        recurse: true
+      loop: "{{ installer_git_repos }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.dir_name }}"
+
+- name: Create symlinks for python tools installed via setup.py/pyproject.toml or pip
+  when: installer_git_python_script_symlinks | length > 0
+  block:
+    - name: Create symlink for python tools installed via setup.py or pip
+      become: "{{ installer_git_symlink_become }}"
+      ansible.builtin.file:
+        src: "{{ item.path }}/venv/bin/{{ item.script }}"
+        dest: "/usr/local/bin/{{ item.alias }}"
+        state: link
+        force: true
+      loop: "{{ installer_git_python_script_symlinks }}"
+      loop_control:
+        label: "{{ item.path }}/venv/bin/{{ item.script }}"
+
+
+- name: Create symlinks for non python git tools
+  when: installer_git_symlinks | length > 0
+  block:
+    - name: Create symlink for git tools
+      become: "{{ installer_git_symlink_become }}"
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+        force: true
+      loop: "{{ installer_git_symlinks }}"
+      loop_control:
+        label: "{{ item.src }}"
+
+- name: Create symlinks for Python files in Git repositories
+  when: installer_git_python_file_symlinks | length > 0
+  block:
+    - name: Create Python script launcher
+      become: "{{ installer_git_symlink_become }}"
+      ansible.builtin.template:
+        src: python-script-launcher.j2
+        dest: "{{ item.path }}/venv/bin/{{ item.alias }}"
+        mode: "0755"
+      loop: "{{ installer_git_python_file_symlinks }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.script }}"
+
+    - name: Create symlink for Python script launcher
+      become: "{{ installer_git_symlink_become }}"
+      ansible.builtin.file:
+        src: "{{ item.path }}/venv/bin/{{ item.alias }}"
+        dest: "/usr/local/bin/{{ item.alias }}"
+        state: link
+        force: true
+      loop: "{{ installer_git_python_file_symlinks }}"
+      loop_control:
+        label: "{{ item.path }}/{{ item.script }}"

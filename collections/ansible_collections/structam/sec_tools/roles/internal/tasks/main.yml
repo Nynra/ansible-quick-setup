@@ -1,0 +1,24 @@
+---
+- name: Install internal packages and tools
+  ansible.builtin.include_role:
+    name: structam.ansible_package_installer.installers
+  vars:
+    installer_apt_packages: "{{ internal_apt_packages }}"
+    installer_apt_cleanup: "{{ internal_apt_cleanup }}"
+    installer_pip_packages: "{{ internal_pip_packages }}"
+    installer_pip_upgrade: "{{ internal_pip_upgrade }}"
+    installer_pip_virtualenv: "{{ internal_pip_virtualenv }}"
+    installer_pip_virtualenv_command: "{{ internal_pip_virtualenv_command }}"
+    installer_pip_become: "{{ internal_pip_become }}"
+    installer_git_repos: "{{ internal_git_repos }}"
+    installer_git_force: "{{ internal_git_force }}"
+    installer_git_python_script_symlinks: "{{ internal_git_python_script_symlinks }}"
+    installer_git_python_file_symlinks: "{{ internal_git_python_file_symlinks }}"
+    installer_git_symlinks: "{{ internal_git_symlinks }}"
+    installer_git_symlink_become: "{{ internal_git_symlink_become }}"
+    installer_download_files: "{{ internal_download_files }}"
+    installer_download_become: "{{ internal_download_become }}"
+    installer_download_force: "{{ internal_download_force }}"
+    installer_download_archives: "{{ internal_download_archives }}"
+    installer_download_symlinks: "{{ internal_download_symlinks }}"
+    installer_download_symlink_become: "{{ internal_download_symlink_become }}"

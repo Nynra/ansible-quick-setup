@@ -1,0 +1,5 @@
+---
+collections:
+  - name: structam.ansible_package_installer
+    type: git
+    source: https://gitlab.eaglediksix.nl/ansible/collections/ansible-package-installer.git

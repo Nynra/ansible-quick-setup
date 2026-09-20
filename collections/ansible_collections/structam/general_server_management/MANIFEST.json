@@ -1,0 +1,37 @@
+{
+ "collection_info": {
+  "namespace": "structam",
+  "name": "general_server_management",
+  "version": "1.0.0",
+  "authors": [
+   "Nynra <nynradev@pm.me>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "server",
+   "management",
+   "setup",
+   "hardening",
+   "maintenance"
+  ],
+  "description": "An Ansible collection for general server management tasks, including setup, hardening, and maintenance.",
+  "license": [],
+  "license_file": null,
+  "dependencies": {
+   "community.general": ">=8.0.0",
+   "community.docker": ">=5.0.0"
+  },
+  "repository": "https://gitlab.eaglediksix.nl/ansible/collections/general-server-management",
+  "documentation": null,
+  "homepage": null,
+  "issues": null
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "59b068ac534787f910afe3c7bdd6e6ef6dedc822da521ea81851c450902a0660",
+  "format": 1
+ },
+ "format": 1
+}

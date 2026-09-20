@@ -1,0 +1,7 @@
+---
+- name: Validate the installer role with its defaults
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: installers

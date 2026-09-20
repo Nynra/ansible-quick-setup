@@ -1,9 +1,0 @@
----
-# Install golang packages
-- name: Install golang tools
-  ansible.builtin.command: go install
-  args:
-    chdir: "{{ item.path }}"
-  loop: "{{int_go_tools}}"
-  loop_control:
-    label: "{{item.path}}"

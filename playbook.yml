@@ -2,6 +2,12 @@
 ---
 - hosts: all
   roles:
-    - common
-    # - openvas
-    # - internal
+    - role: structam.sec_tools.common
+      when: install_common_packages | bool
+    - role: structam.sec_tools.internal
+      when: install_internal_packages | bool
+    - role: structam.sec_tools.external
+      when: install_external_packages | bool
+    - role: structam.sec_tools.wireless
+      when: install_wireless_packages | bool
+    - role: structam.general_server_management.env

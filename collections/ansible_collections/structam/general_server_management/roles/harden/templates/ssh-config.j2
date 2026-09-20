@@ -1,0 +1,38 @@
+Include /etc/ssh/sshd_config.d/*.conf
+
+LoginGraceTime 1m
+PermitRootLogin {{ ssh_allow_root_login }}
+StrictModes yes
+MaxAuthTries {{ ssh_max_auth_tries }}
+Port {{ ssh_port }}
+
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+PermitUserEnvironment no
+
+# To disable tunneled clear text passwords, change to "no" here!
+PasswordAuthentication {{ ssh_allow_password_auth }}
+PermitEmptyPasswords no
+KbdInteractiveAuthentication no
+KerberosAuthentication no
+GSSAPIAuthentication no
+UsePAM yes
+
+# We wont be using ssh forwaring on this host
+AllowAgentForwarding no
+AllowTcpForwarding no
+X11Forwarding {{ ssh_allow_x11_forwarding }}
+PrintMotd no
+PermitTunnel {{ ssh_allow_tunnel }}
+
+# no default banner
+Banner none
+DebianBanner no
+
+# Allow client to pass locale and color environment variables
+AcceptEnv LANG LC_* COLORTERM NO_COLOR
+
+# override default of no subsystems
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+
+
