@@ -2,7 +2,7 @@
  "collection_info": {
   "namespace": "structam",
   "name": "sec_tools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "authors": [
    "Nynra <nynradev@pm.me>"
   ],
@@ -27,7 +27,7 @@
   "name": "FILES.json",
   "ftype": "file",
   "chksum_type": "sha256",
-  "chksum_sha256": "13c2159be2819a85e3afcc289f390decc412bcc24fbbee0cece12e320cbc2cb0",
+  "chksum_sha256": "fc2fab06779ff7feef7d581c2c51bb205a28ee6cc37eb4a80c742ccf3134d65c",
   "format": 1
  },
  "format": 1

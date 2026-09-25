@@ -4,18 +4,6 @@ common_install_tmux_workspace: true
 # common apt packages to install
 common_apt_packages:
 - xrdp
-- tcpdump
-- tshark
-- python3-setuptools
-- python3-openssl
-- python3-pip
-- python3-venv
-- build-essential
-- bind9-dnsutils
-- ncat
-- tk-dev
-- gobuster
-- python3-pcapy
 
 common_apt_cleanup: true
 
@@ -25,35 +13,32 @@ common_pip_virtualenv_command: "python3 -m venv"
 common_pip_become: true
 
 # pip packages
-common_pip_packages:
-- dirhunt
-- getsploit
-- pipenv
-- python3-ldap
-- pywhat
+common_pip_packages: []
 
 # Common git repos
 common_git_repos:
-- {path: "/opt/tools/scripts", dir_name: "Pentest-Scripts", repo: "https://github.com/averagesecurityguy/scripts.git"}
+- {path: "/opt/tools/recon", dir_name: "pyWhat", repo: "https://github.com/bee-san/pyWhat.git", python_install: "setup"}
+- {path: "/opt/tools/recon", dir_name: "getsploit", repo: "https://github.com/vulnersCom/getsploit.git", python_install: "setup"}
 - {path: "/opt/tools/recon", dir_name: "defaultcredsearch", repo: "https://github.com/ihebski/DefaultCreds-cheat-sheet.git", python_install: "requirements"}
-- {path: "/opt/tools/recon", dir_name: "hash-identifier", repo: "https://github.com/HashPals/Name-That-Hash.git"}
-- {path: "/opt/tools/recon", dir_name: "Hasher", repo: "https://github.com/FortyNorthSecurity/Hasher.git"}
-- {path: "/opt/tools/recon", dir_name: "findsploit", repo: "https://github.com/1N3/Findsploit.git"}
-- {path: "/opt/tools/recon", dir_name: "payload-generator", repo: "https://github.com/g0tmi1k/msfpc.git"}
-- {path: "/opt/tools/recon", dir_name: "dirsearch", repo: "https://github.com/maurosoria/dirsearch.git"}
+- {path: "/opt/tools/recon", dir_name: "hash-identifier", repo: "https://github.com/HashPals/Name-That-Hash.git", python_install: "setup"}
+- {path: "/opt/tools/recon", dir_name: "Hasher", repo: "https://github.com/FortyNorthSecurity/Hasher.git", python_install: "setup"}
 
-- {path: "/opt/tools/network", dir_name: "nlzr", repo: "https://github.com/noahpowers/nlzr.git"}
 common_git_force: false
 common_git_symlink_become: true
 
-# Create symlinks for python tools installed via setup.py/pyproject.toml or pip
-# Multiple aliases can be created for the same tool by adding multiple entries with the same path but different alias and script values
-common_python_script_symlinks: []
-common_python_file_symlinks: []
+common_git_python_script_symlinks: []
+
+# defaultcredsearch's "creds" is a plain repo-root script, not a pip console-script
+common_git_python_file_symlinks:
+- {path: "/opt/tools/recon/defaultcredsearch", alias: "creds", script: "creds"}
 
 # Symlinks for git tools
 common_git_symlinks:
-- {src: "/opt/tools/recon/defaultcredsearch/creds", dest: "/usr/local/bin/creds"}
+- {src: "/opt/tools/recon/pyWhat/venv/bin/what", dest: "/usr/local/bin/what"}
+- {src: "/opt/tools/recon/getsploit/venv/bin/getsploit", dest: "/usr/local/bin/getsploit"}
+- {src: "/opt/tools/recon/hash-identifier/venv/bin/nth", dest: "/usr/local/bin/nth"}
+# Hasher's setup.py registers the console script as "hashes", not "hasher"
+- {src: "/opt/tools/recon/Hasher/venv/bin/hashes", dest: "/usr/local/bin/hasher"}
 
 # Standalone file downloads
 common_download_files: []
