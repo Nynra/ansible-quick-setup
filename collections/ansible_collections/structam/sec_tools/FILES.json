@@ -179,7 +179,7 @@
    "name": "roles/common/tasks/main.yml",
    "ftype": "file",
    "chksum_type": "sha256",
-   "chksum_sha256": "5ba566d0771fbb72d538d4a7bcc13de5cc57092c2842bcccff1d6ac2ffaab63f",
+   "chksum_sha256": "39c4cf2dd42fe039051cc95a00b730ee1b3daa786a817cc16f92562eacac5d47",
    "format": 1
   },
   {
@@ -242,7 +242,7 @@
    "name": "roles/common/defaults/main.yml",
    "ftype": "file",
    "chksum_type": "sha256",
-   "chksum_sha256": "65ca30cddcc52ca03c61466eef8bdac99ea1cc82de9876b279f9ecea2c68ae37",
+   "chksum_sha256": "5af13630ddd078d2f1f268efa2b8574ccb8744be0d59f0b06c086a4db3b3e9c2",
    "format": 1
   },
   {
@@ -347,7 +347,7 @@
    "name": "roles/internal/defaults/main.yml",
    "ftype": "file",
    "chksum_type": "sha256",
-   "chksum_sha256": "7d7fc5c504fbf6d34a5d976e5d659c31b981d9d634e201b20283fbb83cb9a6f4",
+   "chksum_sha256": "496d256b15bc91fcf05703b755a81f41b6e5b082c28eb38f013cde66880ad724",
    "format": 1
   },
   {
